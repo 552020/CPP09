@@ -99,7 +99,7 @@ Your Makefile must at least contain the rules $(NAME), all, clean, fclean and re
 
 Exercise 00: Bitcoin Exchange
 Exercise : 00
-Bitcoin Exchange
+**Bitcoin Exchange**
 Turn-in directory : ex00/
 Files to turn in : Makefile, main.cpp, BitcoinExchange.{cpp, hpp}
 Forbidden functions : None
@@ -162,7 +162,7 @@ Warning: The container(s) you use to validate this exercise will no longer be us
 
 Exercise 01: Reverse Polish Notation
 Exercise : 01
-RPN
+**RPN**
 Turn-in directory : ex01/
 Files to turn in : Makefile, main.cpp, RPN.{cpp, hpp}
 Forbidden functions : None
@@ -172,14 +172,11 @@ You must create a program with these constraints:
 • Your program must take an inverted Polish mathematical expression as an argument.
 • The numbers used in this operation and passed as arguments will always be less
 than 10. The calculation itself but also the result do not take into account this rule.
-• Your program must process this expression and output the correct result on the
-standard output.
-• If an error occurs during the execution of the program an error message should be
-displayed on the standard output.
+• Your program must process this expression and output the correct result on the standard output.
+• If an error occurs during the execution of the program an error message should be displayed on the standard output.
 • Your program must be able to handle operations with these tokens: "+ - / \*".
 
-You must use at least one container in your code to validate this
-exercise.
+You must use at least one container in your code to validate this exercise.
 
 You don’t need to manage the brackets or decimal numbers.
 
@@ -202,9 +199,7 @@ $>
 "(1 + 1)"
 ```
 
-Warning: The container(s) you used in the previous exercise are
-forbidden here. The container(s) you used to validate this exercise
-will not be usable for the rest of this module.
+Warning: The container(s) you used in the previous exercise are forbidden here. The container(s) you used to validate this exercise will not be usable for the rest of this module.
 
 ## Chapter VI
 

@@ -1,0 +1,85 @@
+#ifndef RPN_HPP
+#define RPN_HPP
+
+#include <iostream>
+#include <stack>
+#include <string>
+#include <stdexcept>
+
+class RPN
+{
+  public:
+	// Default constructor
+	RPN(const std::string &input);
+	// Copy constructor
+	// Copy assignment operator
+	// Destructor
+	~RPN();
+	int calculate();
+	bool isValid() const;
+
+  private:
+	std::string _input;
+	std::stack<int> _stack;
+
+	RPN(const RPN &other);
+	RPN &operator=(const RPN &other);
+
+	bool isOperator(char c) const;
+	bool isValidCharacter(char c) const;
+};
+
+#endif#ifndef RPN_HPP
+#define RPN_HPP
+
+#include <iostream>
+#include <stack>
+#include <string>
+#include <stdexcept>
+
+class RPN
+{
+  public:
+	// Default constructor
+	RPN(const std::string &input);
+	// Copy constructor
+	// Copy assignment operator
+	// Destructor
+	~RPN();
+	int calculate();
+	bool isValid() const;
+
+  private:
+	std::string _input;
+	std::stack<int> _stack;
+
+	RPN(const RPN &other);
+	RPN &operator=(const RPN &other);
+
+	bool isOperator(char c) const;
+	bool isValidCharacter(char c) const;
+};
+
+#endif#include "RPN.hpp"
+#include <iostream>
+
+int main(int argc, char *argv[])
+{
+	if (argc != 2)
+	{
+		std::cout << "Usage: " << argv[0] << " \"RPN expression\"" << std::endl;
+		return 1;
+	}
+	int result = 0;
+	try
+	{
+		RPN rpn(argv[1]);
+		result = rpn.calculate();
+	}
+	catch (const std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+		return 1;
+	}
+	return result;
+}
