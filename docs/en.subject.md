@@ -204,8 +204,7 @@ Warning: The container(s) you used in the previous exercise are forbidden here. 
 ## Chapter VI
 
 Exercise 02: PmergeMe
-Exercise : 02
-PmergeMe
+**PmergeMe**
 Turn-in directory : ex02/
 Files to turn in : Makefile, main.cpp, PmergeMe.{cpp, hpp}
 Forbidden functions : None
@@ -224,8 +223,7 @@ You must use at least two different containers in your code to validate this exe
 It is strongly advised to implement your algorithm for each container and thus to avoid using a generic function.
 
 Here are some additional guidelines on the information you should display line by line on the standard output:
-• On the first line you must display an explicit text followed by the unsorted positive
-integer sequence.
+• On the first line you must display an explicit text followed by the unsorted positive integer sequence.
 • On the second line you must display an explicit text followed by the sorted positive integer sequence.
 • On the third line you must display an explicit text indicating the time used by your algorithm by specifying the first container used to sort the positive integer
 sequence.

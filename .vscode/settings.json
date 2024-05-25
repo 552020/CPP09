@@ -62,6 +62,7 @@
     "algorithm": "cpp",
     "list": "cpp",
     "deque": "cpp",
-    "stack": "cpp"
+    "stack": "cpp",
+    "*.tpp": "cpp"
   }
 }

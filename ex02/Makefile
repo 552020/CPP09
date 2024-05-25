@@ -4,10 +4,10 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -I.
 DEPFLAGS = -MMD -MP
 
 # Target executable name
-TARGET = Span
+TARGET = PmergeMe 
 
 # Source and Object Files
-SRCS = main.cpp Span.cpp
+SRCS = main.cpp PmergeMe.cpp
 
 # Create an obj directory if it doesn't exist
 OBJDIR = obj
