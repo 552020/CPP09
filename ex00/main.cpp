@@ -3,94 +3,24 @@
 #include <sstream>	// For std::stringstream
 #include <string>	// For std::string
 #include <map>		// For std::map
-#include <dirent.h> // For DIR, dirent, opendir, readdir, closedir
 
-// Function to check if a database file exists and is readable - We will use this function to check if data.csv is
-// present
-bool checkFile(const std::string &filename)
-{
-	std::ifstream file(filename.c_str());
-	if (!file.is_open())
-	{
-		std::cerr << "Error: " << filename << " does not exist or is not readable." << std::endl;
-		return false;
-	}
-	return true;
-}
-
-bool validateCSVStructure(const std::string &filename)
-{
-	std::ifstream file(filename.c_str());
-	if (!file.is_open())
-		return false;
-
-	std::string line;
-	bool firstLine = true;
-	while (std::getline(file, line))
-	{
-		if (firstLine)
-		{
-			if (line != "date,exchange_rate")
-			{
-				std::cerr << "Error: Invalid CSV file header." << std::endl;
-				return false;
-			}
-			firstLine = false;
-			continue;
-		}
-		std::stringstream ss(line);
-		std::string date;
-		float rate;
-		if (std::getline(ss, date, ',') && ss >> rate)
-		{
-			// Valid line
-			continue;
-		}
-		else
-		{
-			// Invalid line
-			return false;
-		}
-		return true;
-	}
-}
-
-std::string findCSVDatabase()
-{
-	const std::string defaultDatabaseFilename = "data.csv";
-	if (checkFile(defaultDatabaseFilename) && validateCSVStructure(defaultDatabaseFilename))
-	{
-		return defaultDatabaseFilename;
-	}
-	DIR *dir;
-	struct dirent *ent;
-	if ((dir = opendir(".")) != NULL)
-	{
-		while ((ent = readdir(dir)) != NULL)
-		{
-			std::string filename = ent->d_name;
-			if (filename.size() > 4 && filename.substr(filename.size() - 4) == ".csv")
-			{
-				if (checkFile(filename) && validateCSVStructure(filename))
-				{
-					closedir(dir);
-					return filename;
-				}
-			}
-		}
-		closedir(dir);
-	}
-	return "";
-}
+#include "BitcoinExchange.hpp"
 
 int main(int argc, char *argv[])
 {
-	std::string DBFilename = findCSVDatabase();
-	if (DBFilename.empty())
+	if (argc == 1)
 	{
-		std::cerr << "Error: No valid CSV database found." << std::endl;
+		std::cerr << "Error: could not open file. I mean ... you didn't provide any file!" << std::endl;
 		return 1;
 	}
-	std::cout << "Using database: " << DBFilename << std::endl;
+	if (argc > 2)
+	{
+		std::cerr << "Error: too many arguments." << std::endl;
+		return 1;
+	}
+	std::string inputFilename = argv[1];
+	BitcoinExchange myExchange;
+	myExchange.outputInputFile(inputFilename);
+
 	return 0;
 }

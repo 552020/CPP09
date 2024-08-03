@@ -42,7 +42,7 @@ We will check the presence and integrity of the database file before we check an
 4. **Command-Line Argument Parsing**
 
    - In `main.cpp`, implement argument parsing to ensure exactly one argument is passed (the input file).
-   - Implement `checkFile` function to verify the existence and readability of the file.
+   - Implement `checkFileExistsAndReadable` function to verify the existence and readability of the file.
 
 5. **Processing and Calculation**
 
@@ -73,7 +73,7 @@ We will check the presence and integrity of the database file before we check an
 - **Main Functions:**
 
   - `int main(int argc, char* argv[])`
-  - `void checkFile(const std::string& fileName)`
+  - `void checkFileExistsAndReadable(const std::string& fileName)`
   - `void parseDatabase(const std::string& dbFileName, std::map<std::string, float>& exchangeRates)`
   - `void checkDatabase(const std::string& dbFileName)`
   - `void parseInputFile(const std::string& inputFileName, const std::map<std::string, float>& exchangeRates)`
@@ -85,5 +85,7 @@ We will check the presence and integrity of the database file before we check an
   - `float stringToFloat(const std::string& str)`
 
 # Concepts, objects
+
+- Understand the difference between a normal string and a stream string in C++
 
 `std::ifstream` is a class from the C++ Standard Library used to read data from files. It is part of the <fstream> header. An ifstream object is used to open a file, check if it can be read, and read data from the file. If the file cannot be opened, operations on the ifstream object will fail.
