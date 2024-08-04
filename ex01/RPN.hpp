@@ -6,6 +6,8 @@
 #include <string>
 #include <stdexcept>
 
+std::string trim(const std::string &input);
+
 class RPN
 {
   public:

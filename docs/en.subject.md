@@ -157,7 +157,7 @@ You must create a program with these constraints:
 than 10. The calculation itself but also the result do not take into account this rule.
 • Your program must process this expression and output the correct result on the standard output.
 • If an error occurs during the execution of the program an error message should be displayed on the standard output.
-• Your program must be able to handle operations with these tokens: "+ - / \*".
+• Your program must be able to handle operations with these tokens: `+ - / *`.
 
 You must use at least one container in your code to validate this exercise.
 
@@ -166,20 +166,16 @@ You don’t need to manage the brackets or decimal numbers.
 Here is an example of a standard use:
 
 ```bash
-$> ./RPN
+$> ./RPN "8 9 * 9 - 9 - 9 - 4 - 1 +"
 42
-$> ./RPN
+$> ./RPN "7 7 * 7 -"
 42
-$> ./RPN
+$> ./RPN "1 2 * 2 / 2 * 2 4 - +"
 0
-$> ./RPN
+$> ./RPN "(1 + 1)"
 Error
 $>
 
-"8 9 * 9 - 9 - 9 - 4 - 1 +"
-"7 7 * 7 -"
-"1 2 * 2 / 2 * 2 4 - +"
-"(1 + 1)"
 ```
 
 Warning: The container(s) you used in the previous exercise are forbidden here. The container(s) you used to validate this exercise will not be usable for the rest of this module.
