@@ -63,6 +63,16 @@
     "list": "cpp",
     "deque": "cpp",
     "stack": "cpp",
-    "*.tpp": "cpp"
+    "*.tpp": "cpp",
+    "print": "cpp",
+    "__tree": "cpp",
+    "execution": "cpp",
+    "fstream": "cpp",
+    "iomanip": "cpp",
+    "map": "cpp",
+    "queue": "cpp",
+    "iterator": "cpp",
+    "memory_resource": "cpp",
+    "regex": "cpp"
   }
 }

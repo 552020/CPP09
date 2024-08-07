@@ -215,14 +215,12 @@ Here is an example of a standard use:
 ```bash
 $> ./PmergeMe 3 5 9 7 4
 Before: 3 5 9 7 4
-After:
-3 4 5 7 9
+After: 3 4 5 7 9
 Time to process a range of 5 elements with std::[..] :
 Time to process a range of 5 elements with std::[..] :
 $> ./PmergeMe `shuf -i 1-100000 -n 3000 | tr "\n" " "`
 Before: 141 79 526 321 [...]
-After:
-79 141 321 526 [...]
+After: 79 141 321 526 [...]
 Time to process a range of 3000 elements with std::[..] :
 Time to process a range of 3000 elements with std::[..] :
 $> ./PmergeMe "-1" "2"
