@@ -53,6 +53,40 @@ class GroupIterator
 template <typename Iterator1, typename Iterator2>
 void iter_swap(GroupIterator<Iterator1> lhs, GroupIterator<Iterator2> rhs);
 
+// Comparison operators
+template <typename Iterator1, typename Iterator2>
+bool operator==(const GroupIterator<Iterator1> &lhs, const GroupIterator<Iterator2> &rhs);
+
+template <typename Iterator1, typename Iterator2>
+bool operator!=(const GroupIterator<Iterator1> &lhs, const GroupIterator<Iterator2> &rhs);
+
+// Relational operators
+template <typename Iterator1, typename Iterator2>
+bool operator<(const GroupIterator<Iterator1> &lhs, const GroupIterator<Iterator2> &rhs);
+
+template <typename Iterator1, typename Iterator2>
+bool operator<=(const GroupIterator<Iterator1> &lhs, const GroupIterator<Iterator2> &rhs);
+
+template <typename Iterator1, typename Iterator2>
+bool operator>(const GroupIterator<Iterator1> &lhs, const GroupIterator<Iterator2> &rhs);
+
+template <typename Iterator1, typename Iterator2>
+bool operator>=(const GroupIterator<Iterator1> &lhs, const GroupIterator<Iterator2> &rhs);
+
+// Arithmetic operators - see the implementation in the .tpp file for a detailed explanation
+template <typename Iterator>
+GroupIterator<Iterator> operator+(GroupIterator<Iterator> it, std::size_t numGroups);
+
+template <typename Iterator>
+GroupIterator<Iterator> operator+(std::size_t numGroups, GroupIterator<Iterator> it);
+
+template <typename Iterator>
+GroupIterator<Iterator> operator-(GroupIterator<Iterator> it, std::size_t numGroups);
+
+template <typename Iterator>
+typename GroupIterator<Iterator>::difference_type operator-(const GroupIterator<Iterator> &lhs,
+															const GroupIterator<Iterator> &rhs);
+
 #include "GroupIterator.tpp" // Include the implementation for template classes
 
 #endif // GROUP_ITERATOR_HPP
