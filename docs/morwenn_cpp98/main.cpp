@@ -1,5 +1,7 @@
 #include <iostream>
+#include <deque>
 #include <vector>
+#include <list>
 #include "GroupIterator.hpp"
 
 std::vector<unsigned long long> generateJacobsthalNumbers(size_t n)
@@ -430,6 +432,219 @@ void testArithmeticOperators()
 	}
 }
 
+template <typename RandomAccessIterator>
+struct PendChainNode
+{
+	// The iterator pointing to the current element
+	RandomAccessIterator it;
+	// Iterator to the next element in the main chain
+	// next is probably a deceptive name, cause next is not pointing to the next node in the chain
+	typename std::list<RandomAccessIterator>::iterator next;
+};
+
+template <typename RandomAccessIterator>
+void printMainChain(const std::list<RandomAccessIterator> &mainChain)
+{
+	std::cout << "Main Chain: ";
+	for (typename std::list<RandomAccessIterator>::const_iterator it = mainChain.begin(); it != mainChain.end(); ++it)
+	{
+		std::cout << *(*it) << " ";
+	}
+	std::cout << std::endl;
+}
+
+template <typename RandomAccessIterator>
+// clang-format off
+void printPendChain(const std::list<PendChainNode<RandomAccessIterator> > &pendChain)
+// clang-format on
+{
+	std::cout << "Pend Chain: ";
+	// clang-format off
+	for (typename std::list<PendChainNode<RandomAccessIterator> >::const_iterator it = pendChain.begin();
+		// clang-format on
+		it != pendChain.end();
+		++it)
+	{
+		// std::cout << *(*(it->it)) << " ";
+		std::cout << *(it->it) << " "; // Single dereference
+	}
+	std::cout << std::endl;
+}
+
+template <typename RandomAccessIterator>
+// clang-format off
+void printPendChainWithNext(const std::list<PendChainNode<RandomAccessIterator> > &pendChain)
+// clang-format on
+{
+	std::cout << "Pend Chain with Next: ";
+	// clang-format off
+	for (typename std::list<PendChainNode<RandomAccessIterator> >::const_iterator it = pendChain.begin();
+		 it != pendChain.end();
+		 ++it)
+	// clang-format on
+	{
+		// std::cout << "[Value: " << *(*(it->it)) << ", Next: ";
+		std::cout << "[Value: " << *(it->it) << ", Next: ";
+
+		if (it->next != typename std::list<RandomAccessIterator>::iterator())
+		{
+			std::cout << **(it->next);
+		}
+		else
+		{
+			std::cout << "End";
+		}
+		std::cout << "] ";
+	}
+	std::cout << std::endl;
+}
+
+template <typename RandomAccessIterator, typename Compare>
+void mergeInsertionSortImpl(RandomAccessIterator first, RandomAccessIterator last, Compare compare)
+{
+	std::cout << "mergeInsertionSortImpl" << std::endl;
+	// Debug print
+	std::cout << "mergeInsertionSortImpl: first = " << *first << ", last = " << *(last - 1) << std::endl;
+
+	// Note that we are also defined a iter_swap for GroupIterator
+	// Explicitly use std::iter_swap
+	using std::iter_swap;
+
+	// Calculate the distance (size) between first and last iterators
+	typename std::iterator_traits<RandomAccessIterator>::difference_type size = std::distance(first, last);
+	if (size < 2)
+	{
+		std::cout << "Base case reached with size < 2, returning..." << std::endl;
+		return;
+	}
+
+	bool hasStray = (size % 2 != 0);
+
+	RandomAccessIterator end = last;
+	if (hasStray)
+	{
+		--end; // Equivalent to std::prev(last) in C++98
+	}
+
+	// Iterate over pairs of elements
+	std::cout << "Iterating over pairs of elements ..." << std::endl;
+	for (RandomAccessIterator it = first; it != end; it += 2)
+	{
+		std::cout << "Current pair: " << *it << " and " << *(it + 1) << std::endl;
+		// Compare the current pair and swap if out of order
+		if (compare(*(it + 1), *it))
+		{
+			std::cout << "Swapping " << *it << " and " << *(it + 1) << std::endl;
+			iter_swap(it, it + 1);
+		}
+		else
+		{
+			std::cout << "No need to swap " << *it << " and " << *(it + 1) << std::endl;
+		}
+	}
+	// Debugging the recursive call
+	std::cout << "Calling mergeInsertionSortImpl recursively with first to end" << std::endl;
+
+	// Recursively sort pairs by their maximum value
+	mergeInsertionSort(makeGroupIterator(first, 2), makeGroupIterator(end, 2), compare);
+
+	typedef PendChainNode<RandomAccessIterator> NodeType;
+	std::list<RandomAccessIterator> mainChain;
+	std::list<NodeType> pendChain;
+
+	// Initialize the mainChain with the first two elements
+	// This is done in morwenn's code with the following line:
+	// 	std::list<RandomAccessIterator> chain = {first, std::next(first)};
+	mainChain.push_back(first);
+	std::cout << "first: " << *first << std::endl;
+	RandomAccessIterator second = first + 1;
+	std::cout << "second: " << *second << std::endl;
+	mainChain.push_back(second);
+
+	// Initialize the pendChain with the rest
+	// first is the first element on the data structure containing the numbers
+	// end is the last one, or the previous one if we have a stray
+	for (RandomAccessIterator it = first + 2; it != end; it += 2)
+	{
+		RandomAccessIterator nextIt = it + 1;
+		// .end() returns an iterator to the element following the last element of the list
+		// .insert() insert an element into the list before the position pointed to by the interator provided
+		// (mainChain.end(), the value inserted is nextIt)
+		typename std::list<RandomAccessIterator>::iterator tmp = mainChain.insert(mainChain.end(), nextIt);
+		NodeType node = {it, tmp};
+		pendChain.push_back(node);
+	}
+
+	// If there is an odd element, handle it
+	if (hasStray)
+	{
+		NodeType node = {end, mainChain.end()};
+		pendChain.push_back(node);
+	}
+	// Call the printing functions
+	printMainChain(mainChain);
+	printPendChain(pendChain);
+	printPendChainWithNext(pendChain);
+}
+
+template <typename RandomAccessIterator, typename Compare>
+void mergeInsertionSort(RandomAccessIterator first, RandomAccessIterator last, Compare compare)
+{
+	std::cout << "mergeInsertionSort" << std::endl;
+	mergeInsertionSortImpl(makeGroupIterator(first, 1), makeGroupIterator(last, 1), compare);
+}
+
+void testIteratorCompatibility()
+{
+	// Test with std::vector (Random Access Iterator)
+	int vecArr[] = {5, 3, 2, 8, 7, 6, 1, 4};
+	// int vecArr[] = {5, 3, 2};
+	std::vector<int> vec(vecArr, vecArr + sizeof(vecArr) / sizeof(vecArr[0]));
+
+	// Check the size of the vector before processing
+	std::cout << "Vector size: " << vec.size() << std::endl;
+
+	try
+	{
+
+		std::cout << "Testing with std::vector (Random Access Iterator):" << std::endl;
+		// mergeInsertionSort(vec.begin(), vec.end(), std::less<int>());
+		GroupIterator<std::vector<int>::iterator> it(vec.begin(), 3);
+		std::cout << "GroupIterator initialized. Base: " << *it << std::endl;
+		mergeInsertionSort(vec.begin(), vec.end(), std::less<int>());
+		std::cout << "After mergeInsertionSort:" << std::endl;
+		for (std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)
+			std::cout << *it << " ";
+		std::cout << std::endl;
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << "Exception caught: " << e.what() << std::endl;
+	}
+
+	// Test with std::deque (Random Access Iterator)
+	int dequeArr[] = {5, 3, 2, 8, 7, 6, 1, 4};
+	std::deque<int> deq(dequeArr, dequeArr + sizeof(dequeArr) / sizeof(dequeArr[0]));
+
+	std::cout << "Testing with std::deque (Random Access Iterator):" << std::endl;
+	// mergeInsertionSort(deq.begin(), deq.end(), std::less<int>());
+	mergeInsertionSort(deq.begin(), deq.end(), std::less<int>());
+	for (std::deque<int>::iterator it = deq.begin(); it != deq.end(); ++it)
+		std::cout << *it << " ";
+	std::cout << std::endl;
+
+	// Test with std::list (Bidirectional Iterator)
+	int listArr[] = {5, 3, 8, 1, 2, 7, 4, 6};
+	std::list<int> lst(listArr, listArr + sizeof(listArr) / sizeof(listArr[0]));
+
+	std::cout << "Testing with std::list (Bidirectional Iterator):" << std::endl;
+	std::cout << "Comment out the following lines, but the code will not compile!" << std::endl;
+	// This should fail to compile because std::list's iterators are not Random Access Iterators. Uncommenting the next
+	// 	line should lead to a compilation error.
+	// mergeInsertionSort(lst.begin(), lst.end(), std::less<int>());
+	// TODO: Add a test so that we catch the compilation error
+}
+
 int main()
 {
 
@@ -449,7 +664,22 @@ int main()
 
 	// testMakeGroupIterator();
 
-	testJacobsthalDifferencesVector(2);
+	// testJacobsthalDifferencesVector(2);
+
+	// Generate the full Jacobsthal differences vector
+	std::vector<unsigned long long> fullJacobsthalDifferences = generateJacobsthalDifferences(65);
+
+	// Create a slice of the full vector starting from index 2, following Marowenn's example
+	std::vector<unsigned long long> slicedJacobsthalDifferences(fullJacobsthalDifferences.begin() + 2,
+																fullJacobsthalDifferences.end());
+
+	// testIteratorCompatibility();
+
+	int vecArr[] = {4, 3, 2, 1, 6, 8, 5, 7};
+	std::vector<int> vec(vecArr, vecArr + sizeof(vecArr) / sizeof(vecArr[0]));
+
+	// Perform merge-insertion sort
+	mergeInsertionSort(vec.begin(), vec.end(), std::less<int>());
 
 	return 0;
 }
