@@ -4,6 +4,16 @@
 #include <list>
 #include "GroupIterator.hpp"
 
+template <typename RandomAccessIterator>
+struct PendChainNode
+{
+	// The iterator pointing to the current element
+	RandomAccessIterator it;
+	// Iterator to the next element in the main chain
+	// next is probably a deceptive name, cause next is not pointing to the next node in the chain
+	typename std::list<RandomAccessIterator>::iterator next;
+};
+
 std::vector<unsigned long long> generateJacobsthalNumbers(size_t n)
 {
 	std::vector<unsigned long long> jacobsthal(n);
@@ -35,6 +45,36 @@ std::vector<unsigned long long> generateJacobsthalDifferences(size_t n)
 
 	return jacobsthalDiff;
 }
+
+template <typename RandomAccessIterator, typename Compare>
+// clang-format off
+void binaryInsertionIntoMainChain(const std::vector<unsigned long long> &slicedJacobsthalDiff, std::list<PendChainNode<RandomAccessIterator> > &pendChain, std::list<RandomAccessIterator> &mainChain, Compare compare)
+// clang-format on
+{
+	for (size_t k = 0; k < slicedJacobsthalDiff.size(); ++k)
+	{
+		unsigned long long dist = slicedJacobsthalDiff[k];
+		if (dist >= pendChain.size())
+			break;
+		// clang-format off
+		typename std::list<PendChainNode<RandomAccessIterator> >::iterator it = pendChain.begin();
+		std::advance(it, dist);
+		// clang-format on
+		while (true)
+		{
+			typename std::list<RandomAccessIterator>::iterator insertionPoint =
+				std::upper_bound(mainChain.begin(), mainChain.end(), *it->it, compare);
+
+			mainChain.insert(insertionPoint, it->it);
+			it = pendChain.erase(it);
+			if (it == pendChain.begin())
+				break;
+			--it;
+		}
+	}
+}
+
+//**  TEST FUNCTIONS **//
 
 void testJacobsthalDifferencesVector(size_t skipCount)
 {
@@ -433,16 +473,6 @@ void testArithmeticOperators()
 }
 
 template <typename RandomAccessIterator>
-struct PendChainNode
-{
-	// The iterator pointing to the current element
-	RandomAccessIterator it;
-	// Iterator to the next element in the main chain
-	// next is probably a deceptive name, cause next is not pointing to the next node in the chain
-	typename std::list<RandomAccessIterator>::iterator next;
-};
-
-template <typename RandomAccessIterator>
 void printMainChain(const std::list<RandomAccessIterator> &mainChain)
 {
 	std::cout << "Main Chain: ";
@@ -502,7 +532,10 @@ void printPendChainWithNext(const std::list<PendChainNode<RandomAccessIterator> 
 }
 
 template <typename RandomAccessIterator, typename Compare>
-void mergeInsertionSortImpl(RandomAccessIterator first, RandomAccessIterator last, Compare compare)
+void mergeInsertionSortImpl(RandomAccessIterator first,
+							RandomAccessIterator last,
+							Compare compare,
+							const std::vector<unsigned long long> &slicedJacobsthalDiff)
 {
 	std::cout << "mergeInsertionSortImpl" << std::endl;
 	// Debug print
@@ -550,7 +583,7 @@ void mergeInsertionSortImpl(RandomAccessIterator first, RandomAccessIterator las
 	// Recursively sort pairs by their maximum value
 	std::cout << "first: " << *first << std::endl;
 	std::cout << "end: " << *(end - 1) << std::endl;
-	mergeInsertionSort(makeGroupIterator(first, 2), makeGroupIterator(end, 2), compare);
+	mergeInsertionSort(makeGroupIterator(first, 2), makeGroupIterator(end, 2), compare, slicedJacobsthalDiff);
 
 	typedef PendChainNode<RandomAccessIterator> NodeType;
 	std::list<RandomAccessIterator> mainChain;
@@ -593,14 +626,24 @@ void mergeInsertionSortImpl(RandomAccessIterator first, RandomAccessIterator las
 }
 
 template <typename RandomAccessIterator, typename Compare>
-void mergeInsertionSort(RandomAccessIterator first, RandomAccessIterator last, Compare compare)
+void mergeInsertionSort(RandomAccessIterator first,
+						RandomAccessIterator last,
+						Compare compare,
+						const std::vector<unsigned long long> &slicedJacobsthalDiff)
 {
 	std::cout << "mergeInsertionSort" << std::endl;
-	mergeInsertionSortImpl(makeGroupIterator(first, 1), makeGroupIterator(last, 1), compare);
+	mergeInsertionSortImpl(makeGroupIterator(first, 1), makeGroupIterator(last, 1), compare, slicedJacobsthalDiff);
 }
 
 void testIteratorCompatibility()
 {
+	// Generate the full Jacobsthal differences vector
+	std::vector<unsigned long long> fullJacobsthalDifferences = generateJacobsthalDifferences(65);
+
+	// Create a slice of the full vector starting from index 2, following Marowenn's example
+	std::vector<unsigned long long> slicedJacobsthalDifferences(fullJacobsthalDifferences.begin() + 2,
+																fullJacobsthalDifferences.end());
+
 	// Test with std::vector (Random Access Iterator)
 	int vecArr[] = {5, 3, 2, 8, 7, 6, 1, 4};
 	// int vecArr[] = {5, 3, 2};
@@ -616,7 +659,7 @@ void testIteratorCompatibility()
 		// mergeInsertionSort(vec.begin(), vec.end(), std::less<int>());
 		GroupIterator<std::vector<int>::iterator> it(vec.begin(), 3);
 		std::cout << "GroupIterator initialized. Base: " << *it << std::endl;
-		mergeInsertionSort(vec.begin(), vec.end(), std::less<int>());
+		mergeInsertionSort(vec.begin(), vec.end(), std::less<int>(), slicedJacobsthalDifferences);
 		std::cout << "After mergeInsertionSort:" << std::endl;
 		for (std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)
 			std::cout << *it << " ";
@@ -633,7 +676,7 @@ void testIteratorCompatibility()
 
 	std::cout << "Testing with std::deque (Random Access Iterator):" << std::endl;
 	// mergeInsertionSort(deq.begin(), deq.end(), std::less<int>());
-	mergeInsertionSort(deq.begin(), deq.end(), std::less<int>());
+	mergeInsertionSort(deq.begin(), deq.end(), std::less<int>(), slicedJacobsthalDifferences);
 	for (std::deque<int>::iterator it = deq.begin(); it != deq.end(); ++it)
 		std::cout << *it << " ";
 	std::cout << std::endl;
@@ -684,7 +727,7 @@ int main()
 	std::vector<int> vec(vecArr, vecArr + sizeof(vecArr) / sizeof(vecArr[0]));
 
 	// Perform merge-insertion sort
-	mergeInsertionSort(vec.begin(), vec.end(), std::less<int>());
+	mergeInsertionSort(vec.begin(), vec.end(), std::less<int>(), slicedJacobsthalDifferences);
 
 	return 0;
 }
