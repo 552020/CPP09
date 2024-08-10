@@ -473,7 +473,7 @@ void printPendChain(const std::list<PendChainNode<RandomAccessIterator> > &pendC
 
 template <typename RandomAccessIterator>
 // clang-format off
-void printPendChainWithNext(const std::list<PendChainNode<RandomAccessIterator> > &pendChain)
+void printPendChainWithNext(const std::list<PendChainNode<RandomAccessIterator> > &pendChain, const std::list<RandomAccessIterator> &mainChain)
 // clang-format on
 {
 	std::cout << "Pend Chain with Next: ";
@@ -486,7 +486,9 @@ void printPendChainWithNext(const std::list<PendChainNode<RandomAccessIterator> 
 		// std::cout << "[Value: " << *(*(it->it)) << ", Next: ";
 		std::cout << "[Value: " << *(it->it) << ", Next: ";
 
-		if (it->next != typename std::list<RandomAccessIterator>::iterator())
+		// if (it->next != typename std::list<RandomAccessIterator>::iterator())
+		if (it->next != mainChain.end())
+
 		{
 			std::cout << **(it->next);
 		}
@@ -546,6 +548,8 @@ void mergeInsertionSortImpl(RandomAccessIterator first, RandomAccessIterator las
 	std::cout << "Calling mergeInsertionSortImpl recursively with first to end" << std::endl;
 
 	// Recursively sort pairs by their maximum value
+	std::cout << "first: " << *first << std::endl;
+	std::cout << "end: " << *(end - 1) << std::endl;
 	mergeInsertionSort(makeGroupIterator(first, 2), makeGroupIterator(end, 2), compare);
 
 	typedef PendChainNode<RandomAccessIterator> NodeType;
@@ -580,11 +584,12 @@ void mergeInsertionSortImpl(RandomAccessIterator first, RandomAccessIterator las
 	{
 		NodeType node = {end, mainChain.end()};
 		pendChain.push_back(node);
+		std::cout << "pendChain, last element: " << *end << std::endl;
 	}
 	// Call the printing functions
 	printMainChain(mainChain);
 	printPendChain(pendChain);
-	printPendChainWithNext(pendChain);
+	printPendChainWithNext(pendChain, mainChain);
 }
 
 template <typename RandomAccessIterator, typename Compare>
@@ -675,7 +680,7 @@ int main()
 
 	// testIteratorCompatibility();
 
-	int vecArr[] = {4, 3, 2, 1, 6, 8, 5, 7};
+	int vecArr[] = {4, 3, 2, 1, 6, 8, 5, 7, 9};
 	std::vector<int> vec(vecArr, vecArr + sizeof(vecArr) / sizeof(vecArr[0]));
 
 	// Perform merge-insertion sort
