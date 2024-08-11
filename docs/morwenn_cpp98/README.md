@@ -61,3 +61,42 @@ Here’s what’s happening:
 - **`next` in `PendChainNode`:** This pointer refers to the place in the `mainChain` where the pending element should eventually be inserted, not to the next element in the `pendChain`. It’s correctly serving as a reference to the appropriate place in the `mainChain`.
 
 The process described in your question is correct. The `std::next` in the original code simply points to the next element in the sequence, and the translation using `std::advance` is appropriate. The `next` field in `PendChainNode` (which we might rename to something more descriptive like `mainChainPosition`) is indeed intended to point to the paired element in the `mainChain`. This understanding is key to properly implementing and debugging this part of the algorithm.
+
+Sure! Here's a markdown note explaining the issue and why the refactor was necessary:
+
+### Note on `std::upper_bound` Issue and Refactor
+
+#### Problem Description
+
+During the implementation of the `mergeInsertionSortImpl` function, an error occurred when using `std::upper_bound` for binary insertion into the main chain. The error message indicated a problem with type compatibility in the comparison function, specifically when using a custom iterator (`GroupIterator`).
+
+#### Error Details
+
+The error was related to the type used within the custom `GroupIterator` and how `std::upper_bound` interacts with it:
+
+error: value of type '\_\_nat' is not contextually convertible to 'bool'
+
+This issue arose because `std::upper_bound` expects standard random access iterators, and our custom `GroupIterator` handles groups of elements, which complicated the comparison function. The types involved in the iterator range and the values being compared were not correctly interpreted by `std::upper_bound`.
+
+#### Solution and Refactor
+
+To resolve the issue, the code was refactored to manually implement the functionality of `std::upper_bound`. A manual loop was introduced to find the insertion point in the `mainChain` instead of relying on `std::upper_bound`. This approach ensures compatibility with the custom iterator and avoids the complexities introduced by the group-based iterator.
+
+#### Refactored Code
+
+Here is the refactored section of the code:
+
+```cpp
+MainIt insertionPoint = mainChain.begin();
+for (; insertionPoint != it->next; ++insertionPoint) {
+    if (compare(*it->it, **insertionPoint)) {
+        break;
+    }
+}
+```
+
+This loop manually iterates through the `mainChain` to find the correct insertion point based on the comparison function. While this refactor might slightly reduce the elegance of using STL algorithms, it ensures the code works correctly with the custom iterator in a C++98 environment.
+
+#### Conclusion
+
+This refactor highlights the importance of understanding how custom iterators interact with STL algorithms and the need to adjust implementation strategies when working in older C++ standards, such as C++98. The manual loop approach provides greater control over the behavior of the code and prevents potential type mismatch issues during compilation.

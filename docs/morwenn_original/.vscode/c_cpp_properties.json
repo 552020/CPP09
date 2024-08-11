@@ -1,0 +1,23 @@
+{
+  "configurations": [
+    {
+      "name": "Mac",
+      "includePath": ["${workspaceFolder}/**"],
+      "defines": [],
+      "compilerPath": "/Users/stefano/.brew/opt/llvm/bin/clang++",
+      "cStandard": "c11",
+      "cppStandard": "c++23",
+      "intelliSenseMode": "clang-x64"
+    },
+    {
+      "name": "Linux",
+      "includePath": ["${workspaceFolder}/**"],
+      "defines": [],
+      "compilerPath": "/usr/bin/clang++",
+      "cStandard": "c11",
+      "cppStandard": "c++23",
+      "intelliSenseMode": "clang-x64"
+    }
+  ],
+  "version": 4
+}

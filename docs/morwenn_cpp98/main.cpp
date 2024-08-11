@@ -51,19 +51,32 @@ template <typename RandomAccessIterator, typename Compare>
 void binaryInsertionIntoMainChain(const std::vector<unsigned long long> &slicedJacobsthalDiff, std::list<PendChainNode<RandomAccessIterator> > &pendChain, std::list<RandomAccessIterator> &mainChain, Compare compare)
 // clang-format on
 {
+	// clang-format off
+	typedef typename std::list<PendChainNode<RandomAccessIterator> >::iterator PendIt;
+	// clang-format on
+	typedef typename std::list<RandomAccessIterator>::iterator MainIt;
+
 	for (size_t k = 0; k < slicedJacobsthalDiff.size(); ++k)
 	{
 		unsigned long long dist = slicedJacobsthalDiff[k];
 		if (dist >= pendChain.size())
 			break;
-		// clang-format off
-		typename std::list<PendChainNode<RandomAccessIterator> >::iterator it = pendChain.begin();
+		PendIt it = pendChain.begin();
 		std::advance(it, dist);
-		// clang-format on
 		while (true)
 		{
-			typename std::list<RandomAccessIterator>::iterator insertionPoint =
-				std::upper_bound(mainChain.begin(), mainChain.end(), *it->it, compare);
+
+			// MainIt insertionPoint = std::upper_bound(mainChain.begin(), mainChain.end(), *it->it, compare);
+			// MainIt insertionPoint = std::upper_bound(mainChain.begin(), it->next, *it->it, compare);
+			// Manual loop to find insertion point instead of std::upper_bound
+			MainIt insertionPoint = mainChain.begin();
+			for (; insertionPoint != it->next; ++insertionPoint)
+			{
+				if (compare(*it->it, **insertionPoint))
+				{
+					break;
+				}
+			}
 
 			mainChain.insert(insertionPoint, it->it);
 			it = pendChain.erase(it);
@@ -72,11 +85,86 @@ void binaryInsertionIntoMainChain(const std::vector<unsigned long long> &slicedJ
 			--it;
 		}
 	}
+	while (!pendChain.empty())
+	{
+		// clang-format off
+		typename std::list<PendChainNode<RandomAccessIterator> >::iterator it = --pendChain.end();
+		// clang-format on
+		typename std::list<RandomAccessIterator>::iterator insertionPoint = mainChain.begin();
+		for (; insertionPoint != mainChain.end(); ++insertionPoint)
+		{
+			if (compare(*it->it, **insertionPoint))
+				break;
+		}
+		mainChain.insert(insertionPoint, it->it);
+		pendChain.pop_back();
+	}
+}
+
+template <typename RandomAccessIterator>
+void finalizeSorting(std::list<RandomAccessIterator> &mainChain, RandomAccessIterator first, std::size_t size)
+{
+	// Create a cache vector to hold the sorted elements temporarily
+	std::vector<typename std::iterator_traits<RandomAccessIterator>::value_type> cache;
+	cache.reserve(size); // Reserve memory for performance optimization
+
+	std::cout << "Starting finalizeSorting. Cache reserved size: " << size << std::endl;
+
+	// Iterate over the mainChain and copy elements to the cache
+	for (typename std::list<RandomAccessIterator>::iterator it = mainChain.begin(); it != mainChain.end(); ++it)
+	{
+		// Use the base iterator type directly
+		typename RandomAccessIterator::iterator_type begin = it->base();
+		typename RandomAccessIterator::iterator_type end = begin + it->size();
+		std::cout << "Begin: " << *begin << ", End: " << *(end - 1) << ", Size: " << it->size() << std::endl;
+		// Print the address range being copied
+		std::cout << "Copying range from address " << static_cast<void *>(&(*begin)) << " to "
+				  << static_cast<void *>(&(*(end - 1))) << std::endl;
+
+		if (begin < end)
+		{
+			for (; begin != end; ++begin)
+			{
+				// std::cout << "Pushing " << *begin << " to cache." << std::endl;
+				std::cout << "Pushing " << *begin << " from address " << static_cast<void *>(&(*begin)) << " to cache."
+						  << std::endl;
+
+				cache.push_back(*begin);
+			}
+		}
+		else
+		{
+			std::cerr << "Invalid iterator range detected! Begin is not less than end." << std::endl;
+		}
+	}
+	std::cout << "Finished copying to cache. Cache size: " << cache.size() << std::endl;
+
+	// Check if the cache size matches the expected size
+	if (cache.size() != size)
+	{
+		std::cerr << "Error: Cache size (" << cache.size() << ") does not match the expected size (" << size << ")."
+				  << std::endl;
+	}
+
+	// Copy the elements from the cache back into the original container
+	typename std::vector<typename std::iterator_traits<RandomAccessIterator>::value_type>::iterator cacheIt =
+		cache.begin();
+	for (RandomAccessIterator originalIt = first; cacheIt != cache.end(); ++cacheIt, ++originalIt)
+	{
+		std::cout << "Assigning " << *cacheIt << " from cache address " << static_cast<void *>(&(*cacheIt))
+				  << " to original container address " << static_cast<void *>(&(*originalIt)) << std::endl;
+
+		// Print the address of the original iterator before assignment
+		std::cout << "OriginalIt address: " << static_cast<void *>(&(*originalIt)) << std::endl;
+
+		*originalIt = *cacheIt; // Assign the value back to the original container
+	}
+	std::cout << "Finished finalizeSorting." << std::endl;
 }
 
 //**  TEST FUNCTIONS **//
 
-void testJacobsthalDifferencesVector(size_t skipCount)
+void testJacobsthalDiffemrencesVector(size_t skipCount)
 {
 	// Hardcoded Jacobsthal differences
 	const uint_least64_t hardcodedDifferencesArray[] = {2u,
@@ -557,9 +645,7 @@ void mergeInsertionSortImpl(RandomAccessIterator first,
 
 	RandomAccessIterator end = last;
 	if (hasStray)
-	{
 		--end; // Equivalent to std::prev(last) in C++98
-	}
 
 	// Iterate over pairs of elements
 	std::cout << "Iterating over pairs of elements ..." << std::endl;
@@ -623,6 +709,15 @@ void mergeInsertionSortImpl(RandomAccessIterator first,
 	printMainChain(mainChain);
 	printPendChain(pendChain);
 	printPendChainWithNext(pendChain, mainChain);
+
+	binaryInsertionIntoMainChain(slicedJacobsthalDiff, pendChain, mainChain, compare);
+
+	std::cout << "After binaryInsertionIntoMainChain:" << std::endl;
+	printMainChain(mainChain);
+	printPendChain(pendChain);
+	printPendChainWithNext(pendChain, mainChain);
+
+	// finalizeSorting(mainChain, first, size);
 }
 
 template <typename RandomAccessIterator, typename Compare>

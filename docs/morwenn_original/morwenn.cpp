@@ -7,6 +7,8 @@
 #include <type_traits>
 #include <vector>
 
+#include <iostream>
+
 ////////////////////////////////////////////////////////////
 // Iterator used to sort views of the collection
 
@@ -394,4 +396,33 @@ template <typename RandomAccessIterator, typename Compare = std::less<>>
 auto merge_insertion_sort(RandomAccessIterator first, RandomAccessIterator last, Compare compare = {}) -> void
 {
 	merge_insertion_sort_impl(make_group_iterator(first, 1), make_group_iterator(last, 1), compare);
+}
+
+// EXTRA CODE
+
+int main()
+{
+	// Create a vector of integers to be sorted
+	std::vector<int> data = {7, 3, 9, 1, 5, 4, 8, 6, 2};
+
+	// Print the original data
+	std::cout << "Original data: ";
+	for (const auto &num : data)
+	{
+		std::cout << num << " ";
+	}
+	std::cout << std::endl;
+
+	// Sort the data using merge-insertion sort
+	merge_insertion_sort(data.begin(), data.end(), std::less<int>());
+
+	// Print the sorted data
+	std::cout << "Sorted data: ";
+	for (const auto &num : data)
+	{
+		std::cout << num << " ";
+	}
+	std::cout << std::endl;
+
+	return 0;
 }
