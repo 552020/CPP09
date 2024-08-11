@@ -104,60 +104,74 @@ void binaryInsertionIntoMainChain(const std::vector<unsigned long long> &slicedJ
 template <typename RandomAccessIterator>
 void finalizeSorting(std::list<RandomAccessIterator> &mainChain, RandomAccessIterator first, std::size_t size)
 {
-	// Create a cache vector to hold the sorted elements temporarily
-	std::vector<typename std::iterator_traits<RandomAccessIterator>::value_type> cache;
-	cache.reserve(size); // Reserve memory for performance optimization
-
-	std::cout << "Starting finalizeSorting. Cache reserved size: " << size << std::endl;
-
-	// Iterate over the mainChain and copy elements to the cache
+	std::cout << "Main Chain before caching: " << std::endl;
 	for (typename std::list<RandomAccessIterator>::iterator it = mainChain.begin(); it != mainChain.end(); ++it)
 	{
-		// Use the base iterator type directly
-		typename RandomAccessIterator::iterator_type begin = it->base();
-		typename RandomAccessIterator::iterator_type end = begin + it->size();
+		typename RandomAccessIterator::iterator_type base_it = (*it).base();
+		std::cout << "Value: " << *base_it << ", Address: " << static_cast<void *>(std::addressof(*base_it))
+				  << std::endl;
+	}
+	std::vector<typename std::iterator_traits<RandomAccessIterator>::value_type> cache;
+	cache.reserve(size);
+
+	std::cout << "Starting finalizeSorting. Cache initialized with size: " << size << std::endl;
+	for (typename std::list<RandomAccessIterator>::iterator it = mainChain.begin(); it != mainChain.end(); ++it)
+	{
+		typename RandomAccessIterator::iterator_type begin = (*it).base();
+		typename RandomAccessIterator::iterator_type end = begin + (*it).size();
+
 		std::cout << "Begin: " << *begin << ", End: " << *(end - 1) << ", Size: " << it->size() << std::endl;
-		// Print the address range being copied
 		std::cout << "Copying range from address " << static_cast<void *>(&(*begin)) << " to "
 				  << static_cast<void *>(&(*(end - 1))) << std::endl;
 
-		if (begin < end)
+		for (; begin != end; ++begin)
 		{
-			for (; begin != end; ++begin)
-			{
-				// std::cout << "Pushing " << *begin << " to cache." << std::endl;
-				std::cout << "Pushing " << *begin << " from address " << static_cast<void *>(&(*begin)) << " to cache."
-						  << std::endl;
-
-				cache.push_back(*begin);
-			}
-		}
-		else
-		{
-			std::cerr << "Invalid iterator range detected! Begin is not less than end." << std::endl;
+			std::cout << "Pushing " << *begin << " from address " << static_cast<void *>(&(*begin)) << " to cache."
+					  << std::endl;
+			cache.push_back(*begin);
 		}
 	}
 	std::cout << "Finished copying to cache. Cache size: " << cache.size() << std::endl;
 
-	// Check if the cache size matches the expected size
 	if (cache.size() != size)
 	{
-		std::cerr << "Error: Cache size (" << cache.size() << ") does not match the expected size (" << size << ")."
+		std::cerr << "Warning: Cache size (" << cache.size() << ") does not match expected size (" << size << ")."
 				  << std::endl;
 	}
 
-	// Copy the elements from the cache back into the original container
 	typename std::vector<typename std::iterator_traits<RandomAccessIterator>::value_type>::iterator cacheIt =
 		cache.begin();
-	for (RandomAccessIterator originalIt = first; cacheIt != cache.end(); ++cacheIt, ++originalIt)
+	std::cout << "Cache: ";
+	for (; cacheIt != cache.end(); ++cacheIt)
 	{
-		std::cout << "Assigning " << *cacheIt << " from cache address " << static_cast<void *>(&(*cacheIt))
-				  << " to original container address " << static_cast<void *>(&(*originalIt)) << std::endl;
+		std::cout << *cacheIt << " ";
+	}
+	std::cout << std::endl;
 
-		// Print the address of the original iterator before assignment
-		std::cout << "OriginalIt address: " << static_cast<void *>(&(*originalIt)) << std::endl;
+	std::cout << "Original container before restoring:" << std::endl;
+	for (typename RandomAccessIterator::iterator_type it = first.base(); it != (first + size).base(); ++it)
+	{
+		std::cout << "Value: " << *it << ", Address: " << static_cast<void *>(std::addressof(*it)) << std::endl;
+	}
+	std::cout << std::endl;
 
-		*originalIt = *cacheIt; // Assign the value back to the original container
+	// Copy values from the cache back to the original container
+	typename RandomAccessIterator::iterator_type originalIt = first.base();
+	cacheIt = cache.begin();
+
+	while (cacheIt != cache.end())
+	{
+		std::cout << "Copying " << *cacheIt << " from cache to address "
+				  << static_cast<void *>(std::addressof(*originalIt)) << std::endl;
+		*originalIt = *cacheIt;
+		++originalIt;
+		++cacheIt;
+	}
+
+	std::cout << "Original container after restoring:" << std::endl;
+	for (typename RandomAccessIterator::iterator_type it = first.base(); it != (first + size).base(); ++it)
+	{
+		std::cout << "Value: " << *it << ", Address: " << static_cast<void *>(std::addressof(*it)) << std::endl;
 	}
 	std::cout << "Finished finalizeSorting." << std::endl;
 }
@@ -625,7 +639,7 @@ void mergeInsertionSortImpl(RandomAccessIterator first,
 							Compare compare,
 							const std::vector<unsigned long long> &slicedJacobsthalDiff)
 {
-	std::cout << "mergeInsertionSortImpl" << std::endl;
+	// std::cout << "mergeInsertionSortImpl" << std::endl;
 	// Debug print
 	std::cout << "mergeInsertionSortImpl: first = " << *first << ", last = " << *(last - 1) << std::endl;
 
@@ -635,6 +649,15 @@ void mergeInsertionSortImpl(RandomAccessIterator first,
 
 	// Calculate the distance (size) between first and last iterators
 	typename std::iterator_traits<RandomAccessIterator>::difference_type size = std::distance(first, last);
+	// Debugging prints
+	std::cout << "Size: " << size << std::endl;
+	std::cout << "\033[31mFirst iterator points to value: " << *first
+			  << " at address: " << static_cast<void *>(&(*first)) << "\033[0m" << std::endl;
+
+	std::cout << "\033[31mLast iterator points to value: " << *(last - 1)
+			  << " at address: " << static_cast<void *>(&(*(last - 1))) << "\033[0m" << std::endl;
+
+	std::cout << "\033[31mDistance (size) between first and last: " << size << "\033[0m" << std::endl;
 	if (size < 2)
 	{
 		std::cout << "Base case reached with size < 2, returning..." << std::endl;
@@ -648,28 +671,31 @@ void mergeInsertionSortImpl(RandomAccessIterator first,
 		--end; // Equivalent to std::prev(last) in C++98
 
 	// Iterate over pairs of elements
-	std::cout << "Iterating over pairs of elements ..." << std::endl;
+	// std::cout << "Iterating over pairs of elements ..." << std::endl;
 	for (RandomAccessIterator it = first; it != end; it += 2)
 	{
-		std::cout << "Current pair: " << *it << " and " << *(it + 1) << std::endl;
+		// std::cout << "Current pair: " << *it << " and " << *(it + 1) << std::endl;
 		// Compare the current pair and swap if out of order
 		if (compare(*(it + 1), *it))
 		{
-			std::cout << "Swapping " << *it << " and " << *(it + 1) << std::endl;
+			// std::cout << "Swapping " << *it << " and " << *(it + 1) << std::endl;
 			iter_swap(it, it + 1);
 		}
 		else
 		{
-			std::cout << "No need to swap " << *it << " and " << *(it + 1) << std::endl;
+			// std::cout << "No need to swap " << *it << " and " << *(it + 1) << std::endl;
 		}
 	}
 	// Debugging the recursive call
-	std::cout << "Calling mergeInsertionSortImpl recursively with first to end" << std::endl;
+	// std::cout << "Calling mergeInsertionSortImpl recursively with first to end" << std::endl;
 
 	// Recursively sort pairs by their maximum value
 	std::cout << "first: " << *first << std::endl;
 	std::cout << "end: " << *(end - 1) << std::endl;
 	mergeInsertionSort(makeGroupIterator(first, 2), makeGroupIterator(end, 2), compare, slicedJacobsthalDiff);
+
+	// print size in yellow
+	std::cout << "\033[33mSize: " << size << "\033[0m" << std::endl;
 
 	typedef PendChainNode<RandomAccessIterator> NodeType;
 	std::list<RandomAccessIterator> mainChain;
@@ -717,7 +743,7 @@ void mergeInsertionSortImpl(RandomAccessIterator first,
 	printPendChain(pendChain);
 	printPendChainWithNext(pendChain, mainChain);
 
-	// finalizeSorting(mainChain, first, size);
+	finalizeSorting(mainChain, first, size);
 }
 
 template <typename RandomAccessIterator, typename Compare>
@@ -782,9 +808,9 @@ void testIteratorCompatibility()
 
 	std::cout << "Testing with std::list (Bidirectional Iterator):" << std::endl;
 	std::cout << "Comment out the following lines, but the code will not compile!" << std::endl;
-	// This should fail to compile because std::list's iterators are not Random Access Iterators. Uncommenting the next
-	// 	line should lead to a compilation error.
-	// mergeInsertionSort(lst.begin(), lst.end(), std::less<int>());
+	// This should fail to compile because std::list's iterators are not Random Access Iterators. Uncommenting the
+	// next 	line should lead to a compilation error. mergeInsertionSort(lst.begin(), lst.end(),
+	// std::less<int>());
 	// TODO: Add a test so that we catch the compilation error
 }
 
@@ -818,7 +844,7 @@ int main()
 
 	// testIteratorCompatibility();
 
-	int vecArr[] = {4, 3, 2, 1, 6, 8, 5, 7, 9};
+	int vecArr[] = {7, 3, 9, 1, 5, 4, 8, 6, 2};
 	std::vector<int> vec(vecArr, vecArr + sizeof(vecArr) / sizeof(vecArr[0]));
 
 	// Perform merge-insertion sort

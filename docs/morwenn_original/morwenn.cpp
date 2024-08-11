@@ -288,6 +288,15 @@ auto merge_insertion_sort_impl(RandomAccessIterator first, RandomAccessIterator 
 	using std::iter_swap;
 
 	auto size = std::distance(first, last);
+
+	std::cout << "Size: " << size << std::endl;
+	std::cout << "\033[31mFirst iterator points to value: " << *first
+			  << " at address: " << static_cast<void *>(&(*first)) << "\033[0m" << std::endl;
+
+	std::cout << "\033[31mLast iterator points to value: " << *(last - 1)
+			  << " at address: " << static_cast<void *>(&(*(last - 1))) << "\033[0m" << std::endl;
+
+	std::cout << "\033[31mDistance (size) between first and last: " << size << "\033[0m" << std::endl;
 	if (size < 2)
 		return;
 
@@ -312,6 +321,9 @@ auto merge_insertion_sort_impl(RandomAccessIterator first, RandomAccessIterator 
 
 	merge_insertion_sort(make_group_iterator(first, 2), make_group_iterator(end, 2), compare);
 
+	// print size in yellow
+	std::cout << "\033[33mSize: " << size << "\033[0m" << std::endl;
+
 	////////////////////////////////////////////////////////////
 	// Separate main chain and pend elements
 
@@ -326,6 +338,8 @@ auto merge_insertion_sort_impl(RandomAccessIterator first, RandomAccessIterator 
 	// so we can safely initialize the list with the first two
 	// elements of the sequence
 	std::list<RandomAccessIterator> chain = {first, std::next(first)};
+	std::cout << "first: " << *first << std::endl;
+	std::cout << "second: " << *std::next(first) << std::endl;
 	std::list<node> pend;
 
 	for (auto it = first + 2; it != end; it += 2)
@@ -383,13 +397,36 @@ auto merge_insertion_sort_impl(RandomAccessIterator first, RandomAccessIterator 
 	std::vector<typename std::iterator_traits<RandomAccessIterator>::value_type> cache;
 	cache.reserve(size);
 
+	std::cout << "Main Chain before caching:" << std::endl;
+	for (const auto &it : chain)
+	{
+		std::cout << "Value: " << *it.base() << ", Address: " << static_cast<void *>(std::addressof(*it.base()))
+				  << std::endl;
+	}
+
 	for (auto &&it : chain)
 	{
 		auto begin = it.base();
 		auto end = begin + it.size();
 		std::move(begin, end, std::back_inserter(cache));
 	}
+	std::cout << "Cache after moving from mainChain:" << std::endl;
+	for (const auto &val : cache)
+	{
+		std::cout << "Value: " << val << std::endl;
+	}
+	std::cout << "Original container before restoring:" << std::endl;
+	for (auto it = first.base(); it != last.base(); ++it)
+	{
+		std::cout << "Value: " << *it << ", Address: " << static_cast<void *>(std::addressof(*it)) << std::endl;
+	}
 	std::move(cache.begin(), cache.end(), first.base());
+
+	std::cout << "Original container after restoring:" << std::endl;
+	for (auto it = first.base(); it != last.base(); ++it)
+	{
+		std::cout << "Value: " << *it << ", Address: " << static_cast<void *>(std::addressof(*it)) << std::endl;
+	}
 }
 
 template <typename RandomAccessIterator, typename Compare = std::less<>>
