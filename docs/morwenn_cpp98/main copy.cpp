@@ -2,7 +2,6 @@
 #include <deque>
 #include <vector>
 #include <list>
-#include <ctime> // For clock_t, clock, CLOCKS_PER_SEC
 #include "GroupIterator.hpp"
 
 template <typename RandomAccessIterator>
@@ -105,76 +104,23 @@ void binaryInsertionIntoMainChain(const std::vector<unsigned long long> &slicedJ
 template <typename RandomAccessIterator>
 void finalizeSorting(std::list<RandomAccessIterator> &mainChain, RandomAccessIterator first, std::size_t size)
 {
-	// std::cout << "Main Chain before caching: " << std::endl;
-	// for (typename std::list<RandomAccessIterator>::iterator it = mainChain.begin(); it != mainChain.end(); ++it)
-	// {
-	// 	typename RandomAccessIterator::iterator_type base_it = (*it).base();
-	// 	std::cout << "Value: " << *base_it << ", Address: " << static_cast<void *>(std::addressof(*base_it))
-	// 	  << std::endl;
-	// }
+	// Create a cache vector to hold the sorted elements temporarily
 	std::vector<typename std::iterator_traits<RandomAccessIterator>::value_type> cache;
-	cache.reserve(size);
-
-	// std::cout << "Starting finalizeSorting. Cache initialized with size: " << size << std::endl;
+	cache.reserve(size); // Reserve memory for performance optimization
 	for (typename std::list<RandomAccessIterator>::iterator it = mainChain.begin(); it != mainChain.end(); ++it)
 	{
-		typename RandomAccessIterator::iterator_type begin = (*it).base();
-		typename RandomAccessIterator::iterator_type end = begin + (*it).size();
-
-		// std::cout << "Begin: " << *begin << ", End: " << *(end - 1) << ", Size: " << it->size() << std::endl;
-		// std::cout << "Copying range from address " << static_cast<void *>(&(*begin)) << " to "
-		//   << static_cast<void *>(&(*(end - 1))) << std::endl;
-
-		for (; begin != end; ++begin)
+		typename RandomAccessIterator::iterator_type begin = it->base();
+		typename RandomAccessIterator::iterator_type end = begin + it->size();
+		if (begin < end)
 		{
-			// std::cout << "Pushing " << *begin << " from address " << static_cast<void *>(&(*begin)) << " to cache."
-			// 		  << std::endl;
-			cache.push_back(*begin);
+			for (; begin != end; ++begin)
+				cache.push_back(*begin);
 		}
 	}
-	// std::cout << "Finished copying to cache. Cache size: " << cache.size() << std::endl;
-
-	if (cache.size() != size)
-	{
-		// std::cerr << "Warning: Cache size (" << cache.size() << ") does not match expected size (" << size << ")."
-		// 		  << std::endl;
-	}
-
 	typename std::vector<typename std::iterator_traits<RandomAccessIterator>::value_type>::iterator cacheIt =
 		cache.begin();
-	// std::cout << "Cache: ";
-	// for (; cacheIt != cache.end(); ++cacheIt)
-	// {
-	// 	std::cout << *cacheIt << " ";
-	// }
-	// std::cout << std::endl;
-
-	// std::cout << "Original container before restoring:" << std::endl;
-	for (typename RandomAccessIterator::iterator_type it = first.base(); it != (first + size).base(); ++it)
-	{
-		// std::cout << "Value: " << *it << ", Address: " << static_cast<void *>(std::addressof(*it)) << std::endl;
-	}
-	// std::cout << std::endl;
-
-	// Copy values from the cache back to the original container
-	typename RandomAccessIterator::iterator_type originalIt = first.base();
-	cacheIt = cache.begin();
-
-	while (cacheIt != cache.end())
-	{
-		// std::cout << "Copying " << *cacheIt << " from cache to address "
-		// 		  << static_cast<void *>(std::addressof(*originalIt)) << std::endl;
-		*originalIt = *cacheIt;
-		++originalIt;
-		++cacheIt;
-	}
-
-	// std::cout << "Original container after restoring:" << std::endl;
-	// for (typename RandomAccessIterator::iterator_type it = first.base(); it != (first + size).base(); ++it)
-	// {
-	// 	std::cout << "Value: " << *it << ", Address: " << static_cast<void *>(std::addressof(*it)) << std::endl;
-	// }
-	// std::cout << "Finished finalizeSorting." << std::endl;
+	for (RandomAccessIterator originalIt = first; cacheIt != cache.end(); ++cacheIt, ++originalIt)
+		*originalIt = *cacheIt; // Assign the value back to the original container
 }
 
 //**  TEST FUNCTIONS **//
@@ -640,106 +586,41 @@ void mergeInsertionSortImpl(RandomAccessIterator first,
 							Compare compare,
 							const std::vector<unsigned long long> &slicedJacobsthalDiff)
 {
-	// std::cout << "mergeInsertionSortImpl: first = " << *first << ", last = " << *(last - 1) << std::endl;
-
 	using std::iter_swap;
-
-	// Calculate the distance (size) between first and last iterators
 	typename std::iterator_traits<RandomAccessIterator>::difference_type size = std::distance(first, last);
-	// Debugging prints
-	// std::cout << "Size: " << size << std::endl;
-	// std::cout << "\033[31mFirst iterator points to value: " << *first
-	// 		  << " at address: " << static_cast<void *>(&(*first)) << "\033[0m" << std::endl;
-
-	// std::cout << "\033[31mLast iterator points to value: " << *(last - 1)
-	// 		  << " at address: " << static_cast<void *>(&(*(last - 1))) << "\033[0m" << std::endl;
-
-	// std::cout << "\033[31mDistance (size) between first and last: " << size << "\033[0m" << std::endl;
 	if (size < 2)
-	{
-		// std::cout << "Base case reached with size < 2, returning..." << std::endl;
 		return;
-	}
-
 	bool hasStray = (size % 2 != 0);
-
 	RandomAccessIterator end = last;
 	if (hasStray)
 		--end; // Equivalent to std::prev(last) in C++98
-
-	// Iterate over pairs of elements
-	// std::cout << "Iterating over pairs of elements ..." << std::endl;
 	for (RandomAccessIterator it = first; it != end; it += 2)
 	{
-		// std::cout << "Current pair: " << *it << " and " << *(it + 1) << std::endl;
-		// Compare the current pair and swap if out of order
 		if (compare(*(it + 1), *it))
-		{
-			// std::cout << "Swapping " << *it << " and " << *(it + 1) << std::endl;
 			iter_swap(it, it + 1);
-		}
-		else
-		{
-			// std::cout << "No need to swap " << *it << " and " << *(it + 1) << std::endl;
-		}
 	}
-	// Debugging the recursive call
-	// std::cout << "Calling mergeInsertionSortImpl recursively with first to end" << std::endl;
-
-	// Recursively sort pairs by their maximum value
-	// std::cout << "first: " << *first << std::endl;
-	// std::cout << "end: " << *(end - 1) << std::endl;
 	mergeInsertionSort(makeGroupIterator(first, 2), makeGroupIterator(end, 2), compare, slicedJacobsthalDiff);
-
-	// print size in yellow
-	// std::cout << "\033[33mSize: " << size << "\033[0m" << std::endl;
-
 	typedef PendChainNode<RandomAccessIterator> NodeType;
 	std::list<RandomAccessIterator> mainChain;
 	std::list<NodeType> pendChain;
 
-	// Initialize the mainChain with the first two elements
-	// This is done in morwenn's code with the following line:
-	// 	std::list<RandomAccessIterator> chain = {first, std::next(first)};
 	mainChain.push_back(first);
-	// std::cout << "first: " << *first << std::endl;
 	RandomAccessIterator second = first + 1;
-	// std::cout << "second: " << *second << std::endl;
 	mainChain.push_back(second);
 
-	// Initialize the pendChain with the rest
-	// first is the first element on the data structure containing the numbers
-	// end is the last one, or the previous one if we have a stray
 	for (RandomAccessIterator it = first + 2; it != end; it += 2)
 	{
 		RandomAccessIterator nextIt = it + 1;
-		// .end() returns an iterator to the element following the last element of the list
-		// .insert() insert an element into the list before the position pointed to by the interator provided
-		// (mainChain.end(), the value inserted is nextIt)
 		typename std::list<RandomAccessIterator>::iterator tmp = mainChain.insert(mainChain.end(), nextIt);
 		NodeType node = {it, tmp};
 		pendChain.push_back(node);
 	}
-
-	// If there is an odd element, handle it
 	if (hasStray)
 	{
 		NodeType node = {end, mainChain.end()};
 		pendChain.push_back(node);
-		// std::cout << "pendChain, last element: " << *end << std::endl;
 	}
-	// Call the printing functions
-	// printMainChain(mainChain);
-	// printPendChain(pendChain);
-	// printPendChainWithNext(pendChain, mainChain);
-
 	binaryInsertionIntoMainChain(slicedJacobsthalDiff, pendChain, mainChain, compare);
-
-	// std::cout << "After binaryInsertionIntoMainChain:" << std::endl;
-	// printMainChain(mainChain);
-	// printPendChain(pendChain);
-	// printPendChainWithNext(pendChain, mainChain);
-
 	finalizeSorting(mainChain, first, size);
 }
 
@@ -749,7 +630,7 @@ void mergeInsertionSort(RandomAccessIterator first,
 						Compare compare,
 						const std::vector<unsigned long long> &slicedJacobsthalDiff)
 {
-	// std::cout << "mergeInsertionSort" << std::endl;
+	std::cout << "mergeInsertionSort" << std::endl;
 	mergeInsertionSortImpl(makeGroupIterator(first, 1), makeGroupIterator(last, 1), compare, slicedJacobsthalDiff);
 }
 
@@ -805,250 +686,47 @@ void testIteratorCompatibility()
 
 	std::cout << "Testing with std::list (Bidirectional Iterator):" << std::endl;
 	std::cout << "Comment out the following lines, but the code will not compile!" << std::endl;
-	// This should fail to compile because std::list's iterators are not Random Access Iterators. Uncommenting the
-	// next 	line should lead to a compilation error. mergeInsertionSort(lst.begin(), lst.end(),
-	// std::less<int>());
+	// This should fail to compile because std::list's iterators are not Random Access Iterators. Uncommenting the next
+	// 	line should lead to a compilation error.
+	// mergeInsertionSort(lst.begin(), lst.end(), std::less<int>());
 	// TODO: Add a test so that we catch the compilation error
-}
-
-template <typename Container>
-bool isSorted(const Container &container)
-{
-	if (container.empty())
-	{
-		return true; // An empty container is considered sorted.
-	}
-
-	typename Container::const_iterator it = container.begin();
-	typename Container::const_iterator next_it = it;
-	++next_it;
-
-	for (; next_it != container.end(); ++it, ++next_it)
-	{
-		if (*it > *next_it)
-		{
-			return false; // Found an element that is greater than the next one.
-		}
-	}
-	return true; // No elements were out of order.
-}
-
-void testGroupIteartor()
-{
-	testDefaultConstructor();
-	testParameterizedConstructor();
-	testIterSwap();
-	testComparisonOperators();
-	testRelationalOperators();
-	testDereferenceOperator();
-	testArithmeticOperators();
-	testMakeGroupIterator();
-	testIteratorCompatibility();
-}
-
-template <typename T>
-void testVectorSort(std::vector<T> &vec, std::vector<unsigned long long> &slicedJacobsthalDifferences, bool print)
-{
-	if (print)
-	{
-		std::cout << "Before: ";
-		for (typename std::vector<T>::iterator it = vec.begin(); it != vec.end(); ++it)
-			std::cout << *it << " ";
-		std::cout << std::endl;
-	}
-	clock_t start = clock();
-	mergeInsertionSort(vec.begin(), vec.end(), std::less<T>(), slicedJacobsthalDifferences);
-	clock_t end = clock();
-	if (print)
-	{
-		std::cout << "After: ";
-		for (typename std::vector<T>::iterator it = vec.begin(); it != vec.end(); ++it)
-			std::cout << *it << " ";
-		std::cout << std::endl;
-	}
-	// Check if the vector is sorted
-	bool sorted = isSorted(vec);
-	// Print if the vector is sorted or not
-	std::cout << "Is it sorted? " << (sorted ? "Yes" : "No") << std::endl;
-	// Calculate and print the time taken
-	double timeTaken = double(end - start) / CLOCKS_PER_SEC;
-	std::cout << "Time to process a range of " << vec.size() << " elements with std::vector: " << timeTaken
-			  << " seconds" << std::endl;
-}
-
-void multipleTestVectorSort(int numTests,
-							int minElements,
-							int maxElements,
-							std::vector<unsigned long long> &slicedJacobsthalDifferences,
-							bool print)
-{
-	srand(static_cast<unsigned int>(time(0))); // Seed the random number generator
-	std::vector<int> vec;
-	// Generate random positive integers
-	for (int i = 0; i < numTests; ++i)
-	{
-		int numElements = minElements + rand() % (maxElements - minElements + 1);
-		std::vector<int> vec;
-		for (int j = 0; j < numElements; ++j)
-		{
-			vec.push_back(rand() % 1000 + 1); // Random number between 1 and 1000
-		}
-
-		std::cout << "Test #" << i + 1 << ": Vector with " << numElements << " elements" << std::endl;
-		testVectorSort(vec, slicedJacobsthalDifferences, print);
-		std::cout << std::endl;
-	}
-}
-
-// Function to test sorting a deque and print results
-template <typename T>
-void testDequeSort(std::deque<T> &deq, std::vector<unsigned long long> &slicedJacobsthalDifferences, bool print)
-{
-	if (print)
-	{
-		std::cout << "Before: ";
-		for (typename std::deque<T>::iterator it = deq.begin(); it != deq.end(); ++it)
-			std::cout << *it << " ";
-		std::cout << std::endl;
-	}
-	clock_t start = clock();
-	mergeInsertionSort(deq.begin(), deq.end(), std::less<T>(), slicedJacobsthalDifferences);
-	clock_t end = clock();
-	if (print)
-	{
-		std::cout << "After: ";
-		for (typename std::deque<T>::iterator it = deq.begin(); it != deq.end(); ++it)
-			std::cout << *it << " ";
-		std::cout << std::endl;
-	}
-	// Check if the deque is sorted
-	bool sorted = isSorted(deq);
-	// Print if the deque is sorted or not
-	std::cout << "Is it sorted? " << (sorted ? "Yes" : "No") << std::endl;
-	// Calculate and print the time taken
-	double timeTaken = double(end - start) / CLOCKS_PER_SEC;
-	std::cout << "Time to process a range of " << deq.size() << " elements with std::deque: " << timeTaken << " seconds"
-			  << std::endl;
-}
-
-// Function to run multiple sorting tests on deques
-void multipleTestDequeSort(int numTests,
-						   int minElements,
-						   int maxElements,
-						   std::vector<unsigned long long> &slicedJacobsthalDifferences,
-						   bool print)
-{
-	srand(static_cast<unsigned int>(time(0))); // Seed the random number generator
-
-	for (int i = 0; i < numTests; ++i)
-	{
-		int numElements = minElements + rand() % (maxElements - minElements + 1);
-		std::deque<int> deq;
-
-		// Generate random positive integers
-		for (int j = 0; j < numElements; ++j)
-		{
-			deq.push_back(rand() % 1000 + 1); // Random number between 1 and 1000
-		}
-
-		std::cout << "Test #" << i + 1 << ": Deque with " << numElements << " elements" << std::endl;
-		testDequeSort(deq, slicedJacobsthalDifferences, print);
-		std::cout << std::endl;
-	}
-}
-
-template <typename T>
-void compareVecAndDequeSort(std::vector<T> &vec, std::vector<unsigned long long> &slicedJacobsthaDifference, bool print)
-{
-	if (print)
-	{
-		std::cout << "Before: ";
-		for (typename std::vector<T>::iterator it = vec.begin(); it != vec.end(); ++it)
-			std::cout << *it << " ";
-		std::cout << std::endl;
-	}
-	clock_t startVec = clock();
-
-	mergeInsertionSort(vec.begin(), vec.end(), std::less<T>(), slicedJacobsthaDifference);
-	clock_t endVec = clock();
-	if (print)
-	{
-		std::cout << "After: ";
-		for (typename std::vector<T>::iterator it = vec.begin(); it != vec.end(); ++it)
-			std::cout << *it << " ";
-		std::cout << std::endl;
-	}
-	else
-	{
-		bool vecSorted = isSorted(vec);
-		std::cout << "Is the vector sorted? " << (vecSorted ? "Yes" : "No") << std::endl;
-	}
-	// Calculate and print the time taken for vector sort
-	double timeVec = double(endVec - startVec) / CLOCKS_PER_SEC;
-	std::cout << "Time to process a range of " << vec.size() << " elements with std::vector: " << timeVec << " seconds"
-			  << std::endl;
-	std::deque<T> deq(vec.begin(), vec.end());
-	clock_t startDeq = clock();
-	mergeInsertionSort(deq.begin(), deq.end(), std::less<T>(), slicedJacobsthaDifference);
-	clock_t endDeq = clock();
-	if (!print)
-	{
-		bool deqSorted = isSorted(deq);
-		std::cout << "Is the deque sorted? " << (deqSorted ? "Yes" : "No") << std::endl;
-	}
-	double timeDeq = double(endDeq - startDeq) / CLOCKS_PER_SEC;
-	std::cout << "Time to process a range of " << deq.size() << " elements with std::deque: " << timeDeq << " seconds"
-			  << std::endl;
-}
-
-void multipleCompareVecAndDequeSort(int numTests,
-									int minElements,
-									int maxElements,
-									std::vector<unsigned long long> &slicedJacobsthalDifferences,
-									bool print)
-{
-	srand(static_cast<unsigned int>(time(0))); // Seed the random number generator
-
-	for (int i = 0; i < numTests; ++i)
-	{
-		int numElements = minElements + rand() % (maxElements - minElements + 1);
-		std::vector<int> vec;
-		for (int j = 0; j < numElements; ++j)
-		{
-			vec.push_back(rand() % 1000 + 1); // Random number between 1 and 1000
-		}
-
-		std::cout << "Test #" << i + 1 << ": Comparing Vector and Deque with " << numElements << " elements"
-				  << std::endl;
-		compareVecAndDequeSort(vec, slicedJacobsthalDifferences, print);
-		std::cout << std::endl;
-	}
 }
 
 int main()
 {
 
-	// testGroupIteartor();
+	// testDefaultConstructor();
+
+	// testParameterizedConstructor();
+
+	// testIterSwap();
+
+	// testComparisonOperators();
+
+	// testRelationalOperators();
+
+	// testDereferenceOperator();
+
+	// testArithmeticOperators();
+
+	// testMakeGroupIterator();
 
 	// testJacobsthalDifferencesVector(2);
 
+	// Generate the full Jacobsthal differences vector
 	std::vector<unsigned long long> fullJacobsthalDifferences = generateJacobsthalDifferences(65);
 
+	// Create a slice of the full vector starting from index 2, following Marowenn's example
 	std::vector<unsigned long long> slicedJacobsthalDifferences(fullJacobsthalDifferences.begin() + 2,
 																fullJacobsthalDifferences.end());
 
-	int vecArr[] = {7, 3, 9, 1, 5, 4, 8, 6, 2};
+	// testIteratorCompatibility();
+
+	int vecArr[] = {4, 3, 2, 1, 6, 8, 5, 7, 9};
 	std::vector<int> vec(vecArr, vecArr + sizeof(vecArr) / sizeof(vecArr[0]));
 
 	// Perform merge-insertion sort
-	// mergeInsertionSort(vec.begin(), vec.end(), std::less<int>(), slicedJacobsthalDifferences);
-	// std::cout << "After mergeInsertionSort:" << std::endl;
-	// std::cout << "Sorted: " << (isSorted(vec) ? "Yes" : "No") << std::endl;
-	// testVectorSort(vec, slicedJacobsthalDifferences);
-	// multipleTestVectorSort(5, 100, 10000, slicedJacobsthalDifferences, false);
-	// multipleTestDequeSort(5, 100, 10000, slicedJacobsthalDifferences, false);
-	// compareVecAndDequeSort(vec, slicedJacobsthalDifferences, true);
-	multipleCompareVecAndDequeSort(5, 100, 10000, slicedJacobsthalDifferences, false);
+	mergeInsertionSort(vec.begin(), vec.end(), std::less<int>(), slicedJacobsthalDifferences);
 
 	return 0;
 }
