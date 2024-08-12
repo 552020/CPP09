@@ -7,7 +7,8 @@ DEPFLAGS = -MMD -MP
 TARGET = PmergeMe 
 
 # Source and Object Files
-SRCS = main.cpp PmergeMe.cpp
+SRCS = main.cpp PmergeMe.cpp group_iterator_tests.cpp
+
 
 # Create an obj directory if it doesn't exist
 OBJDIR = obj
