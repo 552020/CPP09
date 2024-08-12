@@ -87,6 +87,6 @@ template <typename Iterator>
 typename GroupIterator<Iterator>::difference_type operator-(const GroupIterator<Iterator> &lhs,
 															const GroupIterator<Iterator> &rhs);
 
-#include "GroupIterator.tpp" // Include the implementation for template classes
+#include "GroupIterator.tpp"
 
-#endif // GROUP_ITERATOR_HPP
+#endif

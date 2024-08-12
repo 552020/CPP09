@@ -162,52 +162,24 @@ bool operator>=(const GroupIterator<Iterator1> &lhs, const GroupIterator<Iterato
 template <typename Iterator>
 GroupIterator<Iterator> operator+(GroupIterator<Iterator> it, std::size_t numGroups)
 {
-	return it += numGroups; // Advance the iterator by numGroups and return the result.
+	return it += numGroups;
 }
-
-// template <typename Iterator>
-// GroupIterator<Iterator> operator+(GroupIterator<Iterator> it, std::size_t numGroups)
-// {
-// 	std::cout << "Before operator+: _it = " << &(*it) << ", numGroups = " << numGroups << std::endl;
-// 	it += numGroups;
-// 	std::cout << "After operator+: _it = " << &(*it) << std::endl;
-// 	return it;
-// }
 
 // Addition operator (numGroups + iterator)
 // This is a convenience overload that allows the numGroups to come first.
 template <typename Iterator>
 GroupIterator<Iterator> operator+(std::size_t numGroups, GroupIterator<Iterator> it)
 {
-	return it += numGroups; // Advance the iterator by numGroups and return the result.
+	return it += numGroups;
 }
-
-// template <typename Iterator>
-// GroupIterator<Iterator> operator+(std::size_t numGroups, GroupIterator<Iterator> it)
-// {
-// 	std::cout << "Before operator+(numGroups, iterator): _it = " << &(*it) << ", numGroups = " << numGroups
-// 			  << std::endl;
-// 	it += numGroups;
-// 	std::cout << "After operator+(numGroups, iterator): _it = " << &(*it) << std::endl;
-// 	return it;
-// }
 
 // Subtraction operator (iterator - numGroups)
 // Moves the iterator backward by a specified number of groups.
 template <typename Iterator>
 GroupIterator<Iterator> operator-(GroupIterator<Iterator> it, std::size_t numGroups)
 {
-	return it -= numGroups; // Move the iterator back by numGroups and return the result.
+	return it -= numGroups;
 }
-
-// template <typename Iterator>
-// GroupIterator<Iterator> operator-(GroupIterator<Iterator> it, std::size_t numGroups)
-// {
-// 	std::cout << "Before operator-: _it = " << &(*it) << ", numGroups = " << numGroups << std::endl;
-// 	it -= numGroups;
-// 	std::cout << "After operator-: _it = " << &(*it) << std::endl;
-// 	return it;
-// }
 
 // Subtraction operator (iterator1 - iterator2)
 // Calculates the difference in the number of groups between two iterators.
@@ -215,18 +187,8 @@ template <typename Iterator>
 typename GroupIterator<Iterator>::difference_type operator-(const GroupIterator<Iterator> &lhs,
 															const GroupIterator<Iterator> &rhs)
 {
-	return (lhs.base() - rhs.base()) / lhs.size(); // Calculate how many groups separate lhs and rhs.
+	return (lhs.base() - rhs.base()) / lhs.size();
 }
-
-// template <typename Iterator>
-// typename GroupIterator<Iterator>::difference_type operator-(const GroupIterator<Iterator> &lhs,
-// 															const GroupIterator<Iterator> &rhs)
-// {
-// 	std::ptrdiff_t diff = (lhs.base() - rhs.base()) / lhs.size();
-// 	std::cout << "Difference operator-: lhs.base() = " << &(*lhs) << ", rhs.base() = " << &(*rhs) << ", diff = " << diff
-// 			  << " groups" << std::endl;
-// 	return diff;
-// }
 
 // Extra constructors
 // Construction function for base iterator
@@ -240,9 +202,6 @@ GroupIterator<Iterator> makeGroupIterator(Iterator it, std::size_t size)
 template <typename Iterator>
 GroupIterator<Iterator> makeGroupIterator(GroupIterator<Iterator> it, std::size_t size)
 {
-	// Compute the new size
 	std::size_t new_size = size * it.size();
-
-	// Create and return a new GroupIterator
 	return GroupIterator<Iterator>(it.base(), new_size);
 }
