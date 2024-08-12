@@ -16,7 +16,7 @@ bool isNumber(const std::string &input)
 	return true;
 }
 
-int main(int argc, char **argv)
+bool checkInputAndFillNumersVec(int argc, char **argv, std::vector<int> &numbers)
 {
 	// std::cout << "Passed arguments: " << argc - 1 << std::endl;
 	std::string input;
@@ -24,11 +24,11 @@ int main(int argc, char **argv)
 	{
 		std::cout << "Usage " << argv[0] << " <some numbers>. Only positive numbers. Sign is also not tolerated!"
 				  << std::endl;
-		return 1;
+		return false;
 	}
 	else if (argc == 2)
 		input = argv[1];
-	// If the user input is passed not as a single string, but as a list of arguments
+	// If the user input is passed not as a single string, but as a list of arguments (e.g. "1" "2" "3")
 	else
 	{
 		for (int i = 1; i < argc; ++i)
@@ -41,7 +41,6 @@ int main(int argc, char **argv)
 
 	std::stringstream ss(input);
 	std::string token;
-	std::vector<int> numbers;
 	while (ss >> token)
 	{
 		if (!isNumber(token))
@@ -50,7 +49,7 @@ int main(int argc, char **argv)
 						 "2' are also not tolerated!"
 					  << std::endl;
 
-			return 1;
+			return false;
 		}
 		long num = std::strtol(token.c_str(), NULL, 10);
 		if (num > INT_MAX || num <= 0)
@@ -58,17 +57,23 @@ int main(int argc, char **argv)
 			std::cout << "Invalid input. Number exceeds maximum allowed value (2147483647) or is non-positive."
 					  << std::endl;
 
-			return 1;
+			return false;
 		}
 		numbers.push_back(static_cast<int>(num));
-		// numbers.push_back(std::strtol(token.c_str(), nullptr, 10));
 	}
-
 	if (numbers.empty())
 	{
 		std::cout << "No numbers were provided." << std::endl;
-		return 1;
+		return false;
 	}
+	return true;
+}
+
+int main(int argc, char **argv)
+{
+	std::vector<int> numbers;
+	if (!checkInputAndFillNumersVec(argc, argv, numbers))
+		return 1;
 
 	PmergeMe merger(numbers);
 	std::cout << "Before: ";

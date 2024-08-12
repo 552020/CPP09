@@ -5,15 +5,15 @@
 #include <iostream> // Required for standard input and output operations like std::cout.
 #include <sstream>
 #include <vector>
-#include <algorithm> // Required for using std::iter_swap and other utility functions like sort, swap, etc.
+#include <deque>
 #include <list>
-#include <ctime>   // std::clock_t
-#include <utility> // std::swap
+#include <algorithm> // Required for using std::iter_swap and other utility functions like sort, swap, etc.
+#include <ctime>	 // std::clock_t
+#include <utility>	 // std::swap
 
 class PmergeMe
 {
   public:
-	// PmergeMe(const std::vector<int> &numbers) : _vecNumbers(numbers);
 	PmergeMe(const std::vector<int> &numbers);
 	~PmergeMe();
 
@@ -29,7 +29,7 @@ class PmergeMe
 	PmergeMe &operator=(const PmergeMe &other);
 
 	std::vector<int> _vecNumbers;
-	std::list<int> _listNumbers;
+	std::deque<int> _deqNumbers;
 
 	void sortVecInitialPairSortAndPrep();
 };
