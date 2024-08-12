@@ -7,7 +7,7 @@ DEPFLAGS = -MMD -MP
 TARGET = morwenn98
 
 # Source and Object Files
-SRCS = main.cpp GroupIterator.cpp group_iterator_tests.cpp
+SRCS = main.cpp GroupIterator.cpp group_iterator_tests.cpp utils.cpp
 
 # Create an obj directory if it doesn't exist
 OBJDIR = obj
