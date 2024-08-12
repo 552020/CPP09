@@ -1,25 +1,18 @@
-#include <iostream>
-#include <deque>
-#include <vector>
-#include <list>
-#include <ctime> // For clock_t, clock, CLOCKS_PER_SEC
-#include "GroupIterator.hpp"
-#include "group_iterator_tests.hpp"
-#include "utils.hpp"
+#include "PmergeMe.hpp"
 
-template <typename RandomAccessIterator>
-struct PendChainNode
+template <typename C>
+void PmergeMe::printContainer(C const &c)
 {
-	// The iterator pointing to the current element
-	RandomAccessIterator it;
-	// Iterator to the next element in the main chain
-	// next is probably a deceptive name, cause next is not pointing to the next node in the chain
-	typename std::list<RandomAccessIterator>::iterator next;
-};
+	for (typename C::const_iterator it = c.begin(); it != c.end(); ++it)
+	{
+		std::cout << *it << " ";
+	}
+	std::cout << std::endl;
+}
 
 template <typename RandomAccessIterator, typename Compare>
 // clang-format off
-void binaryInsertionIntoMainChain(const std::vector<unsigned long long> &slicedJacobsthalDiff, std::list<PendChainNode<RandomAccessIterator> > &pendChain, std::list<RandomAccessIterator> &mainChain, Compare compare)
+void PmergeMe::binaryInsertionIntoMainChain(const std::vector<unsigned long long> &slicedJacobsthalDiff, std::list<PendChainNode<RandomAccessIterator> > &pendChain, std::list<RandomAccessIterator> &mainChain, Compare compare)
 // clang-format on
 {
 	// clang-format off
@@ -73,7 +66,7 @@ void binaryInsertionIntoMainChain(const std::vector<unsigned long long> &slicedJ
 }
 
 template <typename RandomAccessIterator>
-void finalizeSorting(std::list<RandomAccessIterator> &mainChain, RandomAccessIterator first, std::size_t size)
+void PmergeMe::finalizeSorting(std::list<RandomAccessIterator> &mainChain, RandomAccessIterator first, std::size_t size)
 {
 	// std::cout << "Main Chain before caching: " << std::endl;
 	// for (typename std::list<RandomAccessIterator>::iterator it = mainChain.begin(); it != mainChain.end(); ++it)
@@ -148,10 +141,10 @@ void finalizeSorting(std::list<RandomAccessIterator> &mainChain, RandomAccessIte
 }
 
 template <typename RandomAccessIterator, typename Compare>
-void mergeInsertionSortImpl(RandomAccessIterator first,
-							RandomAccessIterator last,
-							Compare compare,
-							const std::vector<unsigned long long> &slicedJacobsthalDiff)
+void PmergeMe::mergeInsertionSortImpl(RandomAccessIterator first,
+									  RandomAccessIterator last,
+									  Compare compare,
+									  const std::vector<unsigned long long> &slicedJacobsthalDiff)
 {
 	// std::cout << "mergeInsertionSortImpl: first = " << *first << ", last = " << *(last - 1) << std::endl;
 
@@ -257,17 +250,17 @@ void mergeInsertionSortImpl(RandomAccessIterator first,
 }
 
 template <typename RandomAccessIterator, typename Compare>
-void mergeInsertionSort(RandomAccessIterator first,
-						RandomAccessIterator last,
-						Compare compare,
-						const std::vector<unsigned long long> &slicedJacobsthalDiff)
+void PmergeMe::mergeInsertionSort(RandomAccessIterator first,
+								  RandomAccessIterator last,
+								  Compare compare,
+								  const std::vector<unsigned long long> &slicedJacobsthalDiff)
 {
 	// std::cout << "mergeInsertionSort" << std::endl;
 	mergeInsertionSortImpl(makeGroupIterator(first, 1), makeGroupIterator(last, 1), compare, slicedJacobsthalDiff);
 }
 
 template <typename Container>
-bool isSorted(const Container &container)
+bool PmergeMe::isSorted(const Container &container)
 {
 	if (container.empty())
 	{
@@ -289,7 +282,9 @@ bool isSorted(const Container &container)
 }
 
 template <typename T>
-void testVectorSort(std::vector<T> &vec, std::vector<unsigned long long> &slicedJacobsthalDifferences, bool print)
+void PmergeMe::testVectorSort(std::vector<T> &vec,
+							  std::vector<unsigned long long> &slicedJacobsthalDifferences,
+							  bool print)
 {
 	if (print)
 	{
@@ -318,11 +313,11 @@ void testVectorSort(std::vector<T> &vec, std::vector<unsigned long long> &sliced
 			  << " seconds" << std::endl;
 }
 
-void multipleTestVectorSort(int numTests,
-							int minElements,
-							int maxElements,
-							std::vector<unsigned long long> &slicedJacobsthalDifferences,
-							bool print)
+void PmergeMe::multipleTestVectorSort(int numTests,
+									  int minElements,
+									  int maxElements,
+									  std::vector<unsigned long long> &slicedJacobsthalDifferences,
+									  bool print)
 {
 	srand(static_cast<unsigned int>(time(0))); // Seed the random number generator
 	std::vector<int> vec;
@@ -340,11 +335,12 @@ void multipleTestVectorSort(int numTests,
 		testVectorSort(vec, slicedJacobsthalDifferences, print);
 		std::cout << std::endl;
 	}
-}
+};
 
-// Function to test sorting a deque and print results
 template <typename T>
-void testDequeSort(std::deque<T> &deq, std::vector<unsigned long long> &slicedJacobsthalDifferences, bool print)
+void PmergeMe::testDequeSort(std::deque<T> &deq,
+							 std::vector<unsigned long long> &slicedJacobsthalDifferences,
+							 bool print)
 {
 	if (print)
 	{
@@ -373,12 +369,11 @@ void testDequeSort(std::deque<T> &deq, std::vector<unsigned long long> &slicedJa
 			  << std::endl;
 }
 
-// Function to run multiple sorting tests on deques
-void multipleTestDequeSort(int numTests,
-						   int minElements,
-						   int maxElements,
-						   std::vector<unsigned long long> &slicedJacobsthalDifferences,
-						   bool print)
+void PmergeMe::multipleTestDequeSort(int numTests,
+									 int minElements,
+									 int maxElements,
+									 std::vector<unsigned long long> &slicedJacobsthalDifferences,
+									 bool print)
 {
 	srand(static_cast<unsigned int>(time(0))); // Seed the random number generator
 
@@ -400,7 +395,9 @@ void multipleTestDequeSort(int numTests,
 }
 
 template <typename T>
-void compareVecAndDequeSort(std::vector<T> &vec, std::vector<unsigned long long> &slicedJacobsthaDifference, bool print)
+void PmergeMe::compareVecAndDequeSort(std::vector<T> &vec,
+									  std::vector<unsigned long long> &slicedJacobsthaDifference,
+									  bool print)
 {
 	if (print)
 	{
@@ -443,11 +440,11 @@ void compareVecAndDequeSort(std::vector<T> &vec, std::vector<unsigned long long>
 			  << std::endl;
 }
 
-void multipleCompareVecAndDequeSort(int numTests,
-									int minElements,
-									int maxElements,
-									std::vector<unsigned long long> &slicedJacobsthalDifferences,
-									bool print)
+void PmergeMe::multipleCompareVecAndDequeSort(int numTests,
+											  int minElements,
+											  int maxElements,
+											  std::vector<unsigned long long> &slicedJacobsthalDifferences,
+											  bool print)
 {
 	srand(static_cast<unsigned int>(time(0))); // Seed the random number generator
 
@@ -465,31 +462,4 @@ void multipleCompareVecAndDequeSort(int numTests,
 		compareVecAndDequeSort(vec, slicedJacobsthalDifferences, print);
 		std::cout << std::endl;
 	}
-}
-
-int main()
-{
-	// testGroupIteartor();
-
-	// testJacobsthalDifferencesVector(2);
-
-	std::vector<unsigned long long> fullJacobsthalDifferences = generateJacobsthalDifferences(65);
-
-	std::vector<unsigned long long> slicedJacobsthalDifferences(fullJacobsthalDifferences.begin() + 2,
-																fullJacobsthalDifferences.end());
-
-	int vecArr[] = {7, 3, 9, 1, 5, 4, 8, 6, 2};
-	std::vector<int> vec(vecArr, vecArr + sizeof(vecArr) / sizeof(vecArr[0]));
-
-	// Perform merge-insertion sort
-	// mergeInsertionSort(vec.begin(), vec.end(), std::less<int>(), slicedJacobsthalDifferences);
-	// std::cout << "After mergeInsertionSort:" << std::endl;
-	// std::cout << "Sorted: " << (isSorted(vec) ? "Yes" : "No") << std::endl;
-	// testVectorSort(vec, slicedJacobsthalDifferences);
-	// multipleTestVectorSort(5, 100, 10000, slicedJacobsthalDifferences, false);
-	// multipleTestDequeSort(5, 100, 10000, slicedJacobsthalDifferences, false);
-	// compareVecAndDequeSort(vec, slicedJacobsthalDifferences, true);
-	multipleCompareVecAndDequeSort(5, 100, 10000, slicedJacobsthalDifferences, false);
-
-	return 0;
 }

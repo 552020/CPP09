@@ -5,6 +5,8 @@
 #include <sstream>
 #include <cctype> // for
 #include "PmergeMe.hpp"
+#include "utils.hpp"
+#include "group_iterator_tests.hpp"
 
 bool isNumber(const std::string &input)
 {
@@ -76,9 +78,7 @@ int main(int argc, char **argv)
 		return 1;
 
 	PmergeMe merger(numbers);
-	std::cout << "Before: ";
-	merger.printContainer(numbers);
-	merger.sortList();
-	merger.sortVec();
+	// TODO I need also a default constructor for when we don't pass any arugment
+	// TODO test all the functions.
 	return 0;
 }
