@@ -4,7 +4,7 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g -fsanitize=address -fsanitize=und
 DEPFLAGS = -MMD -MP
 
 # Target executable name
-TARGET = group_iterator_test
+TARGET = morwenn98
 
 # Source and Object Files
 SRCS = main.cpp GroupIterator.cpp
