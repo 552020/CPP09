@@ -1,4 +1,5 @@
 #include "group_iterator_tests.hpp"
+#include "PmergeMe.hpp"
 
 std::vector<unsigned long long> generateJacobsthalNumbers(size_t n);
 
@@ -307,6 +308,7 @@ void testArithmeticOperators()
 
 void testIteratorCompatibility()
 {
+	PmergeMe pmergeMe;
 	// Generate the full Jacobsthal differences vector
 	std::vector<unsigned long long> fullJacobsthalDifferences = generateJacobsthalDifferences(65);
 
@@ -329,7 +331,7 @@ void testIteratorCompatibility()
 		// mergeInsertionSort(vec.begin(), vec.end(), std::less<int>());
 		GroupIterator<std::vector<int>::iterator> it(vec.begin(), 3);
 		std::cout << "GroupIterator initialized. Base: " << *it << std::endl;
-		mergeInsertionSort(vec.begin(), vec.end(), std::less<int>(), slicedJacobsthalDifferences);
+		pmergeMe.mergeInsertionSort(vec.begin(), vec.end(), std::less<int>(), slicedJacobsthalDifferences);
 		std::cout << "After mergeInsertionSort:" << std::endl;
 		for (std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)
 			std::cout << *it << " ";
@@ -346,7 +348,7 @@ void testIteratorCompatibility()
 
 	std::cout << "Testing with std::deque (Random Access Iterator):" << std::endl;
 	// mergeInsertionSort(deq.begin(), deq.end(), std::less<int>());
-	mergeInsertionSort(deq.begin(), deq.end(), std::less<int>(), slicedJacobsthalDifferences);
+	pmergeMe.mergeInsertionSort(deq.begin(), deq.end(), std::less<int>(), slicedJacobsthalDifferences);
 	for (std::deque<int>::iterator it = deq.begin(); it != deq.end(); ++it)
 		std::cout << *it << " ";
 	std::cout << std::endl;
@@ -358,7 +360,7 @@ void testIteratorCompatibility()
 	std::cout << "Testing with std::list (Bidirectional Iterator):" << std::endl;
 	std::cout << "Comment out the following lines, but the code will not compile!" << std::endl;
 	// This should fail to compile because std::list's iterators are not Random Access Iterators. Uncommenting the
-	// next 	line should lead to a compilation error. mergeInsertionSort(lst.begin(), lst.end(),
+	// next 	line should lead to a compilation error. pmergeMe.mergeInsertionSort(lst.begin(), lst.end(),
 	// std::less<int>());
 	// TODO: Add a test so that we catch the compilation error
 }

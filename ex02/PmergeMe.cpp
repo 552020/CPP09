@@ -2,8 +2,14 @@
 
 PmergeMe::PmergeMe(const std::vector<int> &numbers) : _vecNumbers(numbers)
 {
-	_listNumbers.assign(_vecNumbers.begin(), _vecNumbers.end());
+	_deqNumbers.assign(_vecNumbers.begin(), _vecNumbers.end());
 }
+
+PmergeMe::PmergeMe() : _vecNumbers(), _deqNumbers()
+{
+	// Containers are already initialized as empty by default
+}
+
 PmergeMe::~PmergeMe()
 {
 }
@@ -21,65 +27,134 @@ void PmergeMe::sortVec()
 			  << std::endl;
 }
 
-void PmergeMe::sortList()
+void PmergeMe::sortDeque()
 {
 	// std::cout << "Before: ";
-	// printContainer(_listNumbers);
+	// printContainer(_deqNumbers);
 
 	std::clock_t start = std::clock();
 	double duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
 	std::cout << "After:\n";
-	printContainer(_listNumbers);
-	std::cout << "Time to process a range of " << _listNumbers.size() << " elements: " << duration << " seconds"
+	printContainer(_deqNumbers);
+	std::cout << "Time to process a range of " << _deqNumbers.size() << " elements: " << duration << " seconds"
 			  << std::endl;
 }
 
-void PmergeMe::sortVecInitialPairSortAndPrep()
+void PmergeMe::multipleTestVectorSort(int numTests,
+									  int minElements,
+									  int maxElements,
+									  std::vector<unsigned long long> &slicedJacobsthalDifferences,
+									  bool print)
 {
-	std::vector<int>::iterator first = _vecNumbers.begin();
-	std::vector<int>::iterator last = _vecNumbers.end();
-	bool has_stray = _vecNumbers.size() % 2 != 0;
-	if (has_stray)
-		--last;
-	for (std::vector<int>::iterator it = first; it != last; it += 2)
+	srand(static_cast<unsigned int>(time(0))); // Seed the random number generator
+	std::vector<int> vec;
+	// Generate random positive integers
+	for (int i = 0; i < numTests; ++i)
 	{
-		if (*(it + 1) > *it) // Now it ensures descending order
-			// std::swap(*it, *(it + 1));
-			std::iter_swap(it, it + 1);
+		int numElements = minElements + rand() % (maxElements - minElements + 1);
+		std::vector<int> vec;
+		for (int j = 0; j < numElements; ++j)
+		{
+			vec.push_back(rand() % 1000 + 1); // Random number between 1 and 1000
+		}
+
+		std::cout << "Test #" << i + 1 << ": Vector with " << numElements << " elements" << std::endl;
+		testVectorSort(vec, slicedJacobsthalDifferences, print);
+		std::cout << std::endl;
+	}
+};
+
+void PmergeMe::multipleTestDequeSort(int numTests,
+									 int minElements,
+									 int maxElements,
+									 std::vector<unsigned long long> &slicedJacobsthalDifferences,
+									 bool print)
+{
+	srand(static_cast<unsigned int>(time(0))); // Seed the random number generator
+
+	for (int i = 0; i < numTests; ++i)
+	{
+		int numElements = minElements + rand() % (maxElements - minElements + 1);
+		std::deque<int> deq;
+
+		// Generate random positive integers
+		for (int j = 0; j < numElements; ++j)
+		{
+			deq.push_back(rand() % 1000 + 1); // Random number between 1 and 1000
+		}
+
+		std::cout << "Test #" << i + 1 << ": Deque with " << numElements << " elements" << std::endl;
+		testDequeSort(deq, slicedJacobsthalDifferences, print);
+		std::cout << std::endl;
 	}
 }
 
-// void initialPairSortingAndPreparation(std::vector<int> &vec)
-// {
-// 	// Array to store the larger elements from each pair for median finding
-// 	std::vector<int> largerElements;
+template <typename T>
+void PmergeMe::compareVecAndDequeSort(std::vector<T> &vec,
+									  std::vector<unsigned long long> &slicedJacobsthaDifference,
+									  bool print)
+{
+	if (print)
+	{
+		std::cout << "Before: ";
+		for (typename std::vector<T>::iterator it = vec.begin(); it != vec.end(); ++it)
+			std::cout << *it << " ";
+		std::cout << std::endl;
+	}
+	clock_t startVec = clock();
 
-// 	for (size_t i = 0; i < vec.size(); i += 2)
-// 	{
-// 		// Ensure we have a pair to consider
-// 		if (i + 1 < vec.size())
-// 		{
-// 			if (vec[i] > vec[i + 1])
-// 			{
-// 				std::swap(vec[i], vec[i + 1]);
-// 			}
-// 			// Assuming we are interested in the larger element for median finding
-// 			largerElements.push_back(vec[i + 1]);
-// 		}
-// 		else
-// 		{
-// 			// For an odd number of elements, consider the last one directly
-// 			largerElements.push_back(vec[i]);
-// 		}
-// 	}
+	mergeInsertionSort(vec.begin(), vec.end(), std::less<T>(), slicedJacobsthaDifference);
+	clock_t endVec = clock();
+	if (print)
+	{
+		std::cout << "After: ";
+		for (typename std::vector<T>::iterator it = vec.begin(); it != vec.end(); ++it)
+			std::cout << *it << " ";
+		std::cout << std::endl;
+	}
+	else
+	{
+		bool vecSorted = isSorted(vec);
+		std::cout << "Is the vector sorted? " << (vecSorted ? "Yes" : "No") << std::endl;
+	}
+	// Calculate and print the time taken for vector sort
+	double timeVec = double(endVec - startVec) / CLOCKS_PER_SEC;
+	std::cout << "Time to process a range of " << vec.size() << " elements with std::vector: " << timeVec << " seconds"
+			  << std::endl;
+	std::deque<T> deq(vec.begin(), vec.end());
+	clock_t startDeq = clock();
+	mergeInsertionSort(deq.begin(), deq.end(), std::less<T>(), slicedJacobsthaDifference);
+	clock_t endDeq = clock();
+	if (!print)
+	{
+		bool deqSorted = isSorted(deq);
+		std::cout << "Is the deque sorted? " << (deqSorted ? "Yes" : "No") << std::endl;
+	}
+	double timeDeq = double(endDeq - startDeq) / CLOCKS_PER_SEC;
+	std::cout << "Time to process a range of " << deq.size() << " elements with std::deque: " << timeDeq << " seconds"
+			  << std::endl;
+}
 
-// 	// At this point, `largerElements` contains elements for median finding.
-// 	// For the sake of demonstration, let's pretend we sort and pick the median.
-// 	// Note: In a true implementation, you might use a more efficient selection algorithm.
-// 	std::sort(largerElements.begin(), largerElements.end());
-// 	int median = largerElements[largerElements.size() / 2]; // Simplistic median finding
+void PmergeMe::multipleCompareVecAndDequeSort(int numTests,
+											  int minElements,
+											  int maxElements,
+											  std::vector<unsigned long long> &slicedJacobsthalDifferences,
+											  bool print)
+{
+	srand(static_cast<unsigned int>(time(0))); // Seed the random number generator
 
-// 	std::cout << "Preliminary Median: " << median << std::endl;
+	for (int i = 0; i < numTests; ++i)
+	{
+		int numElements = minElements + rand() % (maxElements - minElements + 1);
+		std::vector<int> vec;
+		for (int j = 0; j < numElements; ++j)
+		{
+			vec.push_back(rand() % 1000 + 1); // Random number between 1 and 1000
+		}
 
-// 	// Next steps would involve using this median for further partitioning or sorting.
-// }
+		std::cout << "Test #" << i + 1 << ": Comparing Vector and Deque with " << numElements << " elements"
+				  << std::endl;
+		compareVecAndDequeSort(vec, slicedJacobsthalDifferences, print);
+		std::cout << std::endl;
+	}
+}

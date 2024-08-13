@@ -25,11 +25,12 @@ struct PendChainNode
 class PmergeMe
 {
   public:
+	PmergeMe();
 	PmergeMe(const std::vector<int> &numbers);
 	~PmergeMe();
 
 	void sortVec();
-	void sortList();
+	void sortDeque();
 
 	template <typename C>
 	void printContainer(C const &container);
@@ -40,10 +41,10 @@ class PmergeMe
 							const std::vector<unsigned long long> &slicedJacobsthalDiff);
 
 	// * TESTS * //
+
 	template <typename T>
 	void testVectorSort(std::vector<T> &vec, std::vector<unsigned long long> &slicedJacobsthalDifferences, bool print);
-	template <typename T>
-	void testVectorSort(std::vector<T> &vec, std::vector<unsigned long long> &slicedJacobsthalDifferences, bool print);
+
 	void multipleTestVectorSort(int numTests,
 								int minElements,
 								int maxElements,
@@ -66,7 +67,6 @@ class PmergeMe
 										bool print);
 
   private:
-	PmergeMe();
 	PmergeMe(const PmergeMe &other);
 	PmergeMe &operator=(const PmergeMe &other);
 
