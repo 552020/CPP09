@@ -28,8 +28,8 @@ class PmergeMe
 	PmergeMe(const std::vector<int> &numbers);
 	~PmergeMe();
 
-	void sortVec();
-	void sortDeque();
+	void sortVec(bool print);
+	void sortDeque(bool print);
 
 	template <typename RandomAccessIterator, typename Compare>
 	void mergeInsertionSort(RandomAccessIterator first,
@@ -63,6 +63,9 @@ class PmergeMe
 
 	std::vector<unsigned long long> _jacDiffs;
 	std::vector<unsigned long long> _slicedJacDiffs;
+
+	double _durationVec;
+	double _durationDeq;
 
 	template <typename RandomAccessIterator, typename Compare>
 	// clang-format off

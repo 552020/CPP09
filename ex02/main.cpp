@@ -42,8 +42,6 @@ int main(int argc, char **argv)
 		return 1;
 
 	PmergeMe merger(numbers);
-	// TODO I need also a default constructor for when we don't pass any arugment
-	// TODO test all the functions.
 
 	return 0;
 }

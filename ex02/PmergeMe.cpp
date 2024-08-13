@@ -19,28 +19,35 @@ PmergeMe::~PmergeMe()
 {
 }
 
-void PmergeMe::sortVec()
+void PmergeMe::sortVec(bool print)
 {
-	// std::cout << "Before: ";
-	// printContainer(_vecNumbers);
-
+	if (print)
+		printContainer(_vecNumbers, "Before");
 	std::clock_t start = std::clock();
-	double duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
-	printContainer(_vecNumbers, "After");
-	std::cout << "Time to process a range of " << _vecNumbers.size() << " elements: " << duration << " seconds"
-			  << std::endl;
+	mergeInsertionSort(_vecNumbers.begin(), _vecNumbers.end(), std::less<int>(), _slicedJacDiffs);
+	std::clock_t end = std::clock();
+	_durationVec = (std::clock() - start) / (double)CLOCKS_PER_SEC;
+
+	if (print)
+	{
+		printContainer(_vecNumbers, "After");
+		printTiming(_vecNumbers, start, end, 6, "std::vector");
+	}
 }
 
-void PmergeMe::sortDeque()
+void PmergeMe::sortDeque(bool print)
 {
-	// std::cout << "Before: ";
-	// printContainer(_deqNumbers);
-
+	if (print)
+		printContainer(_deqNumbers, "Before");
 	std::clock_t start = std::clock();
-	double duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
-	printContainer(_deqNumbers, "After");
-	std::cout << "Time to process a range of " << _deqNumbers.size() << " elements: " << duration << " seconds"
-			  << std::endl;
+	mergeInsertionSort(_deqNumbers.begin(), _deqNumbers.end(), std::less<int>(), _slicedJacDiffs);
+	std::clock_t end = std::clock();
+	_durationVec = (std::clock() - start) / (double)CLOCKS_PER_SEC;
+	if (print)
+	{
+		printContainer(_deqNumbers, "After");
+		printTiming(_deqNumbers, start, end, 6, "std::deque");
+	}
 }
 
 void PmergeMe::testVectorSort(std::vector<int> &vec, bool print)
