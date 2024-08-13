@@ -24,6 +24,9 @@ template <typename Container>
 void printTiming(
 	const Container &container, clock_t start, clock_t end, int precision, const std::string &containerType);
 
+template <typename Container>
+void printTimingDuration(const Container &container, double duration, int precision, const std::string &containerType);
+
 template <typename RandomAccessIterator>
 void printMainChain(const std::list<RandomAccessIterator> &mainChain);
 

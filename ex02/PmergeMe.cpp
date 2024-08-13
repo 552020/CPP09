@@ -1,14 +1,15 @@
 #include "PmergeMe.hpp"
 #include "utils.hpp"
 
-PmergeMe::PmergeMe(const std::vector<int> &numbers) : _vecNumbers(numbers)
+PmergeMe::PmergeMe(const std::vector<int> &numbers)
+	: _vecNumbers(numbers), _deqNumbers(), _durationVec(0), _durationDeq(0)
 {
 	_deqNumbers.assign(_vecNumbers.begin(), _vecNumbers.end());
 	_jacDiffs = generateJacobsthalDifferences(65);
 	_slicedJacDiffs.assign(_jacDiffs.begin() + 2, _jacDiffs.end());
 }
 
-PmergeMe::PmergeMe() : _vecNumbers(), _deqNumbers()
+PmergeMe::PmergeMe() : _vecNumbers(), _deqNumbers(), _durationVec(0), _durationDeq(0)
 {
 	// Containers are already initialized as empty by default
 	_jacDiffs = generateJacobsthalDifferences(65);

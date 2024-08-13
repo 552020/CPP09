@@ -41,7 +41,10 @@ int main(int argc, char **argv)
 	if (!checkInputAndFillNumersVec(argc, argv, numbers))
 		return 1;
 
-	PmergeMe merger(numbers);
+	PmergeMe pmergeMe(numbers);
+
+	pmergeMe.sortVec(true);
+	pmergeMe.sortDeque(true);
 
 	return 0;
 }

@@ -19,6 +19,14 @@ void printTiming(
 			  << timeTaken << " seconds" << std::endl;
 }
 
+template <typename Container>
+void printTimingDuration(const Container &container, double duration, int precision, const std::string &containerType)
+{
+	std::cout << std::fixed << std::setprecision(precision);
+	std::cout << "Time to process a range of " << container.size() << " elements with " << containerType << ": "
+			  << duration << " seconds" << std::endl;
+}
+
 template <typename RandomAccessIterator>
 void printMainChain(const std::list<RandomAccessIterator> &mainChain)
 {
