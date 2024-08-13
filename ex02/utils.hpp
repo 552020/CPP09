@@ -20,6 +20,10 @@ void testJacobsthalDifferencesVector(size_t skipCount);
 template <typename C>
 void printContainer(C const &container);
 
+template <typename Container>
+void printTiming(
+	const Container &container, clock_t start, clock_t end, int precision, const std::string &containerType);
+
 template <typename RandomAccessIterator>
 void printMainChain(const std::list<RandomAccessIterator> &mainChain);
 

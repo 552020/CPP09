@@ -13,12 +13,12 @@ void runTests()
 	std::cout << "Running tests" << std::endl;
 	PmergeMe merger;
 	// Test testVectorSort
-	int arr[] = {5, 4, 3, 2, 1};
+	int arr[] = {5, 4, 3, 2, 1, 8, 7, 10, 9, 6};
 	std::vector<int> vec(arr, arr + sizeof(arr) / sizeof(arr[0]));
-	// merger.testVectorSort(vec, true);
+	merger.testVectorSort(vec, true);
 
 	// Test multipleTestVectorSort
-	merger.multipleTestVectorSort(10, 100, 1000, false);
+	// merger.multipleTestVectorSort(10, 100, 1000, false);
 }
 
 int main(int argc, char **argv)

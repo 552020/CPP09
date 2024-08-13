@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include <iomanip> // for std::setprecision
 #include <sstream>
 #include <vector>
 #include <deque>

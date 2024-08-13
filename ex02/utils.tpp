@@ -8,6 +8,16 @@ void printContainer(C const &c)
 	std::cout << std::endl;
 }
 
+template <typename Container>
+void printTiming(
+	const Container &container, clock_t start, clock_t end, int precision, const std::string &containerType)
+{
+	std::cout << std::fixed << std::setprecision(precision);
+	double timeTaken = double(end - start) / CLOCKS_PER_SEC;
+	std::cout << "Time to process a range of " << container.size() << " elements with " << containerType << ": "
+			  << timeTaken << " seconds" << std::endl;
+}
+
 template <typename RandomAccessIterator>
 void printMainChain(const std::list<RandomAccessIterator> &mainChain)
 {

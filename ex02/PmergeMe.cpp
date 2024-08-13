@@ -1,5 +1,5 @@
 #include "PmergeMe.hpp"
-#include <utils.hpp>
+#include "utils.hpp"
 
 PmergeMe::PmergeMe(const std::vector<int> &numbers) : _vecNumbers(numbers)
 {
@@ -50,9 +50,7 @@ void PmergeMe::testVectorSort(std::vector<int> &vec, bool print)
 	if (print)
 	{
 		std::cout << "Before: ";
-		for (std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)
-			std::cout << *it << " ";
-		std::cout << std::endl;
+		printContainer(vec);
 	}
 	clock_t start = clock();
 	mergeInsertionSort(vec.begin(), vec.end(), std::less<int>(), _slicedJacDiffs);
@@ -60,18 +58,14 @@ void PmergeMe::testVectorSort(std::vector<int> &vec, bool print)
 	if (print)
 	{
 		std::cout << "After: ";
-		for (std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)
-			std::cout << *it << " ";
-		std::cout << std::endl;
+		printContainer(vec);
 	}
 	else
 	{
 		bool sorted = isSorted(vec);
 		std::cout << "Is it sorted? " << (sorted ? "Yes" : "No") << std::endl;
 	}
-	double timeTaken = double(end - start) / CLOCKS_PER_SEC;
-	std::cout << "Time to process a range of " << vec.size() << " elements with std::vector: " << timeTaken
-			  << " seconds" << std::endl;
+	printTiming(vec, start, end, 6, "std::vector");
 }
 
 void PmergeMe::multipleTestVectorSort(int numTests, int minElements, int maxElements, bool print)
