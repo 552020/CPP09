@@ -282,38 +282,6 @@ bool PmergeMe::isSorted(const Container &container)
 }
 
 template <typename T>
-void PmergeMe::testVectorSort(std::vector<T> &vec,
-							  std::vector<unsigned long long> &slicedJacobsthalDifferences,
-							  bool print)
-{
-	if (print)
-	{
-		std::cout << "Before: ";
-		for (typename std::vector<T>::iterator it = vec.begin(); it != vec.end(); ++it)
-			std::cout << *it << " ";
-		std::cout << std::endl;
-	}
-	clock_t start = clock();
-	mergeInsertionSort(vec.begin(), vec.end(), std::less<T>(), slicedJacobsthalDifferences);
-	clock_t end = clock();
-	if (print)
-	{
-		std::cout << "After: ";
-		for (typename std::vector<T>::iterator it = vec.begin(); it != vec.end(); ++it)
-			std::cout << *it << " ";
-		std::cout << std::endl;
-	}
-	// Check if the vector is sorted
-	bool sorted = isSorted(vec);
-	// Print if the vector is sorted or not
-	std::cout << "Is it sorted? " << (sorted ? "Yes" : "No") << std::endl;
-	// Calculate and print the time taken
-	double timeTaken = double(end - start) / CLOCKS_PER_SEC;
-	std::cout << "Time to process a range of " << vec.size() << " elements with std::vector: " << timeTaken
-			  << " seconds" << std::endl;
-}
-
-template <typename T>
 void PmergeMe::testDequeSort(std::deque<T> &deq,
 							 std::vector<unsigned long long> &slicedJacobsthalDifferences,
 							 bool print)

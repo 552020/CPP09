@@ -42,16 +42,13 @@ class PmergeMe
 
 	// * TESTS * //
 
-	template <typename T>
-	void testVectorSort(std::vector<T> &vec, std::vector<unsigned long long> &slicedJacobsthalDifferences, bool print);
+	void testVectorSort(std::vector<int> &vec, bool print);
 
-	void multipleTestVectorSort(int numTests,
-								int minElements,
-								int maxElements,
-								std::vector<unsigned long long> &slicedJacobsthalDifferences,
-								bool print);
+	void multipleTestVectorSort(int numTests, int minElements, int maxElements, bool print);
+
 	template <typename T>
 	void testDequeSort(std::deque<T> &deq, std::vector<unsigned long long> &slicedJacobsthalDifferences, bool print);
+
 	void multipleTestDequeSort(int numTests,
 							   int minElements,
 							   int maxElements,
@@ -73,6 +70,9 @@ class PmergeMe
 	std::vector<int> _vecNumbers;
 	std::deque<int> _deqNumbers;
 
+	std::vector<unsigned long long> _jacDiffs;
+	std::vector<unsigned long long> _slicedJacDiffs;
+
 	template <typename RandomAccessIterator, typename Compare>
 	// clang-format off
 	void binaryInsertionIntoMainChain(const std::vector<unsigned long long> &slicedJacobsthalDiff,
@@ -82,12 +82,12 @@ class PmergeMe
 	// clang-format on
 	template <typename RandomAccessIterator>
 	void finalizeSorting(std::list<RandomAccessIterator> &mainChain, RandomAccessIterator first, std::size_t size);
+
 	template <typename RandomAccessIterator, typename Compare>
 	void mergeInsertionSortImpl(RandomAccessIterator first,
 								RandomAccessIterator last,
 								Compare compare,
 								const std::vector<unsigned long long> &slicedJacobsthalDiff);
-	// * TESTS * //
 	template <typename Container>
 	bool isSorted(const Container &container);
 };

@@ -1,13 +1,18 @@
 #include "PmergeMe.hpp"
+#include <utils.hpp>
 
 PmergeMe::PmergeMe(const std::vector<int> &numbers) : _vecNumbers(numbers)
 {
 	_deqNumbers.assign(_vecNumbers.begin(), _vecNumbers.end());
+	_jacDiffs = generateJacobsthalDifferences(65);
+	_slicedJacDiffs.assign(_jacDiffs.begin() + 2, _jacDiffs.end());
 }
 
 PmergeMe::PmergeMe() : _vecNumbers(), _deqNumbers()
 {
 	// Containers are already initialized as empty by default
+	_jacDiffs = generateJacobsthalDifferences(65);
+	_slicedJacDiffs.assign(_jacDiffs.begin() + 2, _jacDiffs.end());
 }
 
 PmergeMe::~PmergeMe()
@@ -40,11 +45,36 @@ void PmergeMe::sortDeque()
 			  << std::endl;
 }
 
-void PmergeMe::multipleTestVectorSort(int numTests,
-									  int minElements,
-									  int maxElements,
-									  std::vector<unsigned long long> &slicedJacobsthalDifferences,
-									  bool print)
+void PmergeMe::testVectorSort(std::vector<int> &vec, bool print)
+{
+	if (print)
+	{
+		std::cout << "Before: ";
+		for (std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)
+			std::cout << *it << " ";
+		std::cout << std::endl;
+	}
+	clock_t start = clock();
+	mergeInsertionSort(vec.begin(), vec.end(), std::less<int>(), _slicedJacDiffs);
+	clock_t end = clock();
+	if (print)
+	{
+		std::cout << "After: ";
+		for (std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)
+			std::cout << *it << " ";
+		std::cout << std::endl;
+	}
+	else
+	{
+		bool sorted = isSorted(vec);
+		std::cout << "Is it sorted? " << (sorted ? "Yes" : "No") << std::endl;
+	}
+	double timeTaken = double(end - start) / CLOCKS_PER_SEC;
+	std::cout << "Time to process a range of " << vec.size() << " elements with std::vector: " << timeTaken
+			  << " seconds" << std::endl;
+}
+
+void PmergeMe::multipleTestVectorSort(int numTests, int minElements, int maxElements, bool print)
 {
 	srand(static_cast<unsigned int>(time(0))); // Seed the random number generator
 	std::vector<int> vec;
@@ -55,11 +85,11 @@ void PmergeMe::multipleTestVectorSort(int numTests,
 		std::vector<int> vec;
 		for (int j = 0; j < numElements; ++j)
 		{
-			vec.push_back(rand() % 1000 + 1); // Random number between 1 and 1000
+			vec.push_back(rand() % 10000 + 1); // Random number between 1 and 10000
 		}
 
 		std::cout << "Test #" << i + 1 << ": Vector with " << numElements << " elements" << std::endl;
-		testVectorSort(vec, slicedJacobsthalDifferences, print);
+		testVectorSort(vec, print);
 		std::cout << std::endl;
 	}
 };
