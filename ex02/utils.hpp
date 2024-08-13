@@ -17,6 +17,9 @@ std::vector<unsigned long long> generateJacobsthalNumbers(size_t n);
 std::vector<unsigned long long> generateJacobsthalDifferences(size_t n);
 void testJacobsthalDifferencesVector(size_t skipCount);
 
+template <typename C>
+void printContainer(C const &container);
+
 template <typename RandomAccessIterator>
 void printMainChain(const std::list<RandomAccessIterator> &mainChain);
 
@@ -27,5 +30,7 @@ void printPendChain(const std::list<PendChainNode<RandomAccessIterator> > &pendC
 template <typename RandomAccessIterator>
 void printPendChainWithNext(const std::list<PendChainNode<RandomAccessIterator> > &pendChain, const std::list<RandomAccessIterator> &mainChain);
 // clang-format on
+
+#include "utils.tpp"
 
 #endif

@@ -2,14 +2,12 @@
 #define PMERGEME_HPP
 
 #include <string>
-#include <iostream> // Required for standard input and output operations like std::cout.
+#include <iostream>
 #include <sstream>
 #include <vector>
 #include <deque>
 #include <list>
-#include <algorithm> // Required for using std::iter_swap and other utility functions like sort, swap, etc.
-#include <ctime>	 // std::clock_t
-#include <utility>	 // std::swap
+#include <ctime>
 #include "GroupIterator.hpp"
 
 template <typename RandomAccessIterator>
@@ -32,8 +30,6 @@ class PmergeMe
 	void sortVec();
 	void sortDeque();
 
-	template <typename C>
-	void printContainer(C const &container);
 	template <typename RandomAccessIterator, typename Compare>
 	void mergeInsertionSort(RandomAccessIterator first,
 							RandomAccessIterator last,

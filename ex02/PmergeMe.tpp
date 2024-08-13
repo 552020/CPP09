@@ -1,14 +1,6 @@
 #include "PmergeMe.hpp"
 
-template <typename C>
-void PmergeMe::printContainer(C const &c)
-{
-	for (typename C::const_iterator it = c.begin(); it != c.end(); ++it)
-	{
-		std::cout << *it << " ";
-	}
-	std::cout << std::endl;
-}
+
 
 template <typename RandomAccessIterator, typename Compare>
 // clang-format off
