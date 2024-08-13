@@ -15,10 +15,18 @@ void runTests()
 	// Test testVectorSort
 	int arr[] = {5, 4, 3, 2, 1, 8, 7, 10, 9, 6};
 	std::vector<int> vec(arr, arr + sizeof(arr) / sizeof(arr[0]));
-	merger.testVectorSort(vec, true);
+	// merger.testVectorSort(vec, true);
 
 	// Test multipleTestVectorSort
 	// merger.multipleTestVectorSort(10, 100, 1000, false);
+
+	// Test testDequeSort
+	int arr2[] = {5, 4, 3, 2, 1, 8, 7, 10, 9, 6};
+	std::deque<int> deq(arr2, arr2 + sizeof(arr2) / sizeof(arr2[0]));
+	// merger.testDequeSort(deq, true);
+
+	// Test multipleTestDequeSort
+	merger.multipleTestDequeSort(10, 100, 1000, false);
 }
 
 int main(int argc, char **argv)

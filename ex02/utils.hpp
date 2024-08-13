@@ -18,7 +18,7 @@ std::vector<unsigned long long> generateJacobsthalDifferences(size_t n);
 void testJacobsthalDifferencesVector(size_t skipCount);
 
 template <typename C>
-void printContainer(C const &container);
+void printContainer(C const &container, std::string str);
 
 template <typename Container>
 void printTiming(

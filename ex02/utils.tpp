@@ -1,8 +1,9 @@
 #include "utils.hpp"
 
 template <typename C>
-void printContainer(C const &c)
+void printContainer(C const &c, std::string str)
 {
+	std::cout << str << ": ";
 	for (typename C::const_iterator it = c.begin(); it != c.end(); ++it)
 		std::cout << *it << " ";
 	std::cout << std::endl;

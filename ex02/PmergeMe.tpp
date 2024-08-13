@@ -1,7 +1,5 @@
 #include "PmergeMe.hpp"
 
-
-
 template <typename RandomAccessIterator, typename Compare>
 // clang-format off
 void PmergeMe::binaryInsertionIntoMainChain(const std::vector<unsigned long long> &slicedJacobsthalDiff, std::list<PendChainNode<RandomAccessIterator> > &pendChain, std::list<RandomAccessIterator> &mainChain, Compare compare)
@@ -271,36 +269,4 @@ bool PmergeMe::isSorted(const Container &container)
 		}
 	}
 	return true; // No elements were out of order.
-}
-
-template <typename T>
-void PmergeMe::testDequeSort(std::deque<T> &deq,
-							 std::vector<unsigned long long> &slicedJacobsthalDifferences,
-							 bool print)
-{
-	if (print)
-	{
-		std::cout << "Before: ";
-		for (typename std::deque<T>::iterator it = deq.begin(); it != deq.end(); ++it)
-			std::cout << *it << " ";
-		std::cout << std::endl;
-	}
-	clock_t start = clock();
-	mergeInsertionSort(deq.begin(), deq.end(), std::less<T>(), slicedJacobsthalDifferences);
-	clock_t end = clock();
-	if (print)
-	{
-		std::cout << "After: ";
-		for (typename std::deque<T>::iterator it = deq.begin(); it != deq.end(); ++it)
-			std::cout << *it << " ";
-		std::cout << std::endl;
-	}
-	// Check if the deque is sorted
-	bool sorted = isSorted(deq);
-	// Print if the deque is sorted or not
-	std::cout << "Is it sorted? " << (sorted ? "Yes" : "No") << std::endl;
-	// Calculate and print the time taken
-	double timeTaken = double(end - start) / CLOCKS_PER_SEC;
-	std::cout << "Time to process a range of " << deq.size() << " elements with std::deque: " << timeTaken << " seconds"
-			  << std::endl;
 }

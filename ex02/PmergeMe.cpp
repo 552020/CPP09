@@ -26,8 +26,7 @@ void PmergeMe::sortVec()
 
 	std::clock_t start = std::clock();
 	double duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
-	std::cout << "After:\n";
-	printContainer(_vecNumbers);
+	printContainer(_vecNumbers, "After");
 	std::cout << "Time to process a range of " << _vecNumbers.size() << " elements: " << duration << " seconds"
 			  << std::endl;
 }
@@ -39,8 +38,7 @@ void PmergeMe::sortDeque()
 
 	std::clock_t start = std::clock();
 	double duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
-	std::cout << "After:\n";
-	printContainer(_deqNumbers);
+	printContainer(_deqNumbers, "After");
 	std::cout << "Time to process a range of " << _deqNumbers.size() << " elements: " << duration << " seconds"
 			  << std::endl;
 }
@@ -48,18 +46,12 @@ void PmergeMe::sortDeque()
 void PmergeMe::testVectorSort(std::vector<int> &vec, bool print)
 {
 	if (print)
-	{
-		std::cout << "Before: ";
-		printContainer(vec);
-	}
+		printContainer(vec, "Before");
 	clock_t start = clock();
 	mergeInsertionSort(vec.begin(), vec.end(), std::less<int>(), _slicedJacDiffs);
 	clock_t end = clock();
 	if (print)
-	{
-		std::cout << "After: ";
-		printContainer(vec);
-	}
+		printContainer(vec, "After");
 	else
 	{
 		bool sorted = isSorted(vec);
@@ -78,9 +70,7 @@ void PmergeMe::multipleTestVectorSort(int numTests, int minElements, int maxElem
 		int numElements = minElements + rand() % (maxElements - minElements + 1);
 		std::vector<int> vec;
 		for (int j = 0; j < numElements; ++j)
-		{
 			vec.push_back(rand() % 10000 + 1); // Random number between 1 and 10000
-		}
 
 		std::cout << "Test #" << i + 1 << ": Vector with " << numElements << " elements" << std::endl;
 		testVectorSort(vec, print);
@@ -88,11 +78,24 @@ void PmergeMe::multipleTestVectorSort(int numTests, int minElements, int maxElem
 	}
 };
 
-void PmergeMe::multipleTestDequeSort(int numTests,
-									 int minElements,
-									 int maxElements,
-									 std::vector<unsigned long long> &slicedJacobsthalDifferences,
-									 bool print)
+void PmergeMe::testDequeSort(std::deque<int> &deq, bool print)
+{
+	if (print)
+		printContainer(deq, "Before");
+	clock_t start = clock();
+	mergeInsertionSort(deq.begin(), deq.end(), std::less<int>(), _slicedJacDiffs);
+	clock_t end = clock();
+	if (print)
+		printContainer(deq, "After");
+	else
+	{
+		bool sorted = isSorted(deq);
+		std::cout << "Is it sorted? " << (sorted ? "Yes" : "No") << std::endl;
+	}
+	printTiming(deq, start, end, 6, "std::deque");
+}
+
+void PmergeMe::multipleTestDequeSort(int numTests, int minElements, int maxElements, bool print)
 {
 	srand(static_cast<unsigned int>(time(0))); // Seed the random number generator
 
@@ -108,7 +111,7 @@ void PmergeMe::multipleTestDequeSort(int numTests,
 		}
 
 		std::cout << "Test #" << i + 1 << ": Deque with " << numElements << " elements" << std::endl;
-		testDequeSort(deq, slicedJacobsthalDifferences, print);
+		testDequeSort(deq, print);
 		std::cout << std::endl;
 	}
 }
