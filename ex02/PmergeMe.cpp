@@ -2,14 +2,15 @@
 #include "utils.hpp"
 
 PmergeMe::PmergeMe(const std::vector<int> &numbers)
-	: _vecNumbers(numbers), _deqNumbers(), _durationVec(0), _durationDeq(0)
+	: _vecNumbers(numbers), _deqNumbers(), _durationVec(0), _durationDeq(0), _defaultPrecision(DEFAULT_PRECISION)
 {
 	_deqNumbers.assign(_vecNumbers.begin(), _vecNumbers.end());
 	_jacDiffs = generateJacobsthalDifferences(65);
 	_slicedJacDiffs.assign(_jacDiffs.begin() + 2, _jacDiffs.end());
 }
 
-PmergeMe::PmergeMe() : _vecNumbers(), _deqNumbers(), _durationVec(0), _durationDeq(0)
+PmergeMe::PmergeMe()
+	: _vecNumbers(), _deqNumbers(), _durationVec(0), _durationDeq(0), _defaultPrecision(DEFAULT_PRECISION)
 {
 	// Containers are already initialized as empty by default
 	_jacDiffs = generateJacobsthalDifferences(65);
@@ -43,12 +44,24 @@ void PmergeMe::sortDeque(bool print)
 	std::clock_t start = std::clock();
 	mergeInsertionSort(_deqNumbers.begin(), _deqNumbers.end(), std::less<int>(), _slicedJacDiffs);
 	std::clock_t end = std::clock();
-	_durationVec = (std::clock() - start) / (double)CLOCKS_PER_SEC;
+	_durationDeq = (std::clock() - start) / (double)CLOCKS_PER_SEC;
 	if (print)
 	{
 		printContainer(_deqNumbers, "After");
 		printTiming(_deqNumbers, start, end, 6, "std::deque");
 	}
+}
+
+void PmergeMe::sortVecAndDeque()
+{
+	printContainer(_vecNumbers, "Before");
+	sortVec(false);
+	printContainer(_vecNumbers, "After");
+	sortDeque(false);
+	if (!isSorted(_vecNumbers) || !isSorted(_deqNumbers))
+		std::cout << "Error: The vector or deque is not sorted" << std::endl;
+	printTimingDuration(_vecNumbers, _durationVec, _defaultPrecision, "std::vector");
+	printTimingDuration(_deqNumbers, _durationDeq, _defaultPrecision, "std::deque");
 }
 
 void PmergeMe::testVectorSort(std::vector<int> &vec, bool print)

@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 
 template <typename RandomAccessIterator>
@@ -26,7 +27,6 @@ void printTiming(
 
 template <typename Container>
 void printTimingDuration(const Container &container, double duration, int precision, const std::string &containerType);
-
 template <typename RandomAccessIterator>
 void printMainChain(const std::list<RandomAccessIterator> &mainChain);
 

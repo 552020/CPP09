@@ -1,6 +1,8 @@
 #ifndef PMERGEME_HPP
 #define PMERGEME_HPP
 
+#define DEFAULT_PRECISION 8
+
 #include <string>
 #include <iostream>
 #include <iomanip> // for std::setprecision
@@ -30,6 +32,7 @@ class PmergeMe
 
 	void sortVec(bool print);
 	void sortDeque(bool print);
+	void sortVecAndDeque();
 
 	template <typename RandomAccessIterator, typename Compare>
 	void mergeInsertionSort(RandomAccessIterator first,
@@ -66,6 +69,7 @@ class PmergeMe
 
 	double _durationVec;
 	double _durationDeq;
+	int _defaultPrecision;
 
 	template <typename RandomAccessIterator, typename Compare>
 	// clang-format off

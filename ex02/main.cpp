@@ -43,8 +43,9 @@ int main(int argc, char **argv)
 
 	PmergeMe pmergeMe(numbers);
 
-	pmergeMe.sortVec(true);
-	pmergeMe.sortDeque(true);
+	// pmergeMe.sortVec(true);
+	// pmergeMe.sortDeque(true);
+	pmergeMe.sortVecAndDeque();
 
 	return 0;
 }
