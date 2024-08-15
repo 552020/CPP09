@@ -6,7 +6,7 @@ test_cases = [
         "1 2 + 3",
         "Error: The last character must be an operator.",
     ),
-    ("1 2 +", "Error: The expression is not balanced."),
+    ("1 2 +", "3"),
     ("4 2 /", "2"),
     ("3 5 8 * 7 + *", "141"),
     ("5 1 2 + 4 * + 3 -", "14"),
