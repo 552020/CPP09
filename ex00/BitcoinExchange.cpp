@@ -350,7 +350,8 @@ void BitcoinExchange::outputInputFile(const std::string &inputFilename)
 				if (it->first > date)
 				{
 					std::cerr << "Error: No valid previous exchange rate found for the date " << date << std::endl;
-					return;
+					// return;
+					continue;
 				}
 			}
 
