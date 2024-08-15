@@ -9,7 +9,6 @@ TARGET = RPN
 # Source and Object Files
 SRCS = main.cpp RPN.cpp
 
-# Create an obj directory if it doesn't exist
 OBJDIR = obj
 
 # Generate object files from source files in the obj directory

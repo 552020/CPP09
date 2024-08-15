@@ -10,7 +10,6 @@ TARGET = PmergeMe
 SRCS = main.cpp PmergeMe.cpp group_iterator_tests.cpp utils.cpp
 
 
-# Create an obj directory if it doesn't exist
 OBJDIR = obj
 
 # Generate object files from source files in the obj directory

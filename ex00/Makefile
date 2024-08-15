@@ -9,7 +9,6 @@ TARGET = btc
 # Source and Object Files
 SRCS = main.cpp BitcoinExchange.cpp
 
-# Create an obj directory if it doesn't exist
 OBJDIR = obj
 
 # Generate object files from source files in the obj directory

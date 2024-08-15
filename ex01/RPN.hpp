@@ -11,11 +11,7 @@ std::string trim(const std::string &input);
 class RPN
 {
   public:
-	// Default constructor
 	RPN(const std::string &input);
-	// Copy constructor
-	// Copy assignment operator
-	// Destructor
 	~RPN();
 	int calculate();
 	bool isValid() const;
