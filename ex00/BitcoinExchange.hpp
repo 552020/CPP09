@@ -1,10 +1,10 @@
-#ifndef BITCOINEXCHANGE_HPP
-#define BITCOINEXCHANGE_HPP
+#pragma once
 
 #include <map>
 #include <string>
 #include <dirent.h>
-#include <cstdlib> 
+#include <cstdlib>
+#include "utils.hpp"
 
 class BitcoinExchange
 {
@@ -25,5 +25,3 @@ class BitcoinExchange
 
 	std::map<std::string, float> _exchangeRates;
 };
-
-#endif

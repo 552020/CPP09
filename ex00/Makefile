@@ -7,7 +7,7 @@ DEPFLAGS = -MMD -MP
 TARGET = btc
 
 # Source and Object Files
-SRCS = main.cpp BitcoinExchange.cpp
+SRCS = main.cpp BitcoinExchange.cpp utils.cpp
 
 OBJDIR = obj
 
