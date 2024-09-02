@@ -161,6 +161,14 @@ void BitcoinExchange::outputInputFile(const std::string &inputFilename)
 		std::cerr << "Error: could not open input file." << std::endl;
 		return;
 	}
+
+	// Check if the map is empty first // We do this check right before starting to interact with the map
+	if (_exchangeRates.empty())
+	{
+		std::cerr << "Error: No exchange rates available." << std::endl;
+		return;
+	}
+
 	std::string line;
 	bool firstLine = true;
 
@@ -212,6 +220,7 @@ void BitcoinExchange::outputInputFile(const std::string &inputFilename)
 				std::cerr << "Error: too large value." << std::endl;
 				continue;
 			}
+
 			// Find the closest date that is not after the given date, the lower_bound() function is used to find the
 			// first element that is not less than the given date (means greater or equal)
 			std::map<std::string, float>::const_iterator it = _exchangeRates.lower_bound(date);
@@ -234,12 +243,9 @@ void BitcoinExchange::outputInputFile(const std::string &inputFilename)
 				if (it != _exchangeRates.begin())
 					--it;
 			}
-			if (it != getExchangeRates().end())
-			{
-				float exchangeRate = it->second;
-				float result = value * exchangeRate;
-				std::cout << date << " => " << value << " = " << result << std::endl;
-			}
+			float exchangeRate = it->second;
+			float result = value * exchangeRate;
+			std::cout << date << " => " << value << " = " << result << std::endl;
 		}
 	}
 }
