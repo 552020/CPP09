@@ -10,22 +10,9 @@ std::string trim(const std::string &str)
 {
 	size_t first = str.find_first_not_of(' ');
 	if (first == std::string::npos)
-	{
 		return "";
-	}
 	size_t last = str.find_last_not_of(' ');
 	return str.substr(first, (last - first + 1));
-}
-
-bool checkFileExistsAndReadable(const std::string &filename)
-{
-	std::ifstream file(filename.c_str());
-	if (!file.is_open())
-	{
-		std::cerr << "Error: The file \"" << filename << "\" does not exist or is not readable." << std::endl;
-		return false;
-	}
-	return true;
 }
 
 bool isNumber(const std::string &str)
@@ -96,6 +83,17 @@ bool checkExchangeRateValueDatabase(const std::string &exchangeRate)
 	return num >= 0;
 }
 
+bool checkFileExistsAndReadable(const std::string &filename)
+{
+	std::ifstream file(filename.c_str());
+	if (!file.is_open())
+	{
+		std::cerr << "Error: The file \"" << filename << "\" does not exist or is not readable." << std::endl;
+		return false;
+	}
+	return true;
+}
+
 bool BitcoinExchange::validateDatabaseFile(const std::string &filename) const
 {
 	// TODO: eventually remove cause we already check for the existencce
@@ -107,33 +105,36 @@ bool BitcoinExchange::validateDatabaseFile(const std::string &filename) const
 	}
 
 	std::string line;
-	bool firstLine = true;
-	while (std::getline(file, line))
+	if (std::getline(file, line))
 	{
-		if (firstLine)
+		if (line != "date,exchange_rate")
 		{
-			if (line != "date,exchange_rate")
-			{
-				std::cerr << "Error: invalid database file header." << std::endl;
-				return false;
-			}
+			std::cerr << "Error: invalid database file header." << std::endl;
+			return false;
 		}
-		firstLine = false;
-		continue;
+	}
+	else
+	{
+		std::cerr << "Error: empty database file." << std::endl;
+		return false;
 	}
 
-	std::stringstream ss(line);
-	std::string date;
-	std::string rateStr;
-
-	if (std::getline(ss, date, ',') && std::getline(ss, rateStr))
+	while (std::getline(file, line))
 	{
-		date = trim(date);
-		rateStr = trim(rateStr);
-		if (!checkDate(date) || !checkExchangeRateValueDatabase(rateStr))
+
+		std::stringstream ss(line);
+		std::string date;
+		std::string rateStr;
+
+		if (std::getline(ss, date, ',') && std::getline(ss, rateStr))
 		{
-			std::cerr << "Warning: invalid data format in database file on line: " << line << std::endl;
-			return false;
+			date = trim(date);
+			rateStr = trim(rateStr);
+			if (!checkDate(date) || !checkExchangeRateValueDatabase(rateStr))
+			{
+				std::cerr << "Warning: invalid data format in database file on line: " << line << std::endl;
+				return false;
+			}
 		}
 	}
 	return true;
@@ -171,15 +172,13 @@ BitcoinExchange::BitcoinExchange()
 	std::string DBFilename = checkDatabase();
 	if (DBFilename.empty())
 	{
-		std::cerr << "Error: no valid database file found." << std::endl;
-		return;
+		throw std::runtime_error("Error: no valid database file found.");
 	}
 	else
 	{
 		if (!parseDatabase(DBFilename))
 		{
-			std::cerr << "Error: invalid database file." << std::endl;
-			return;
+			throw std::runtime_error("Error: could not parse database file.");
 		}
 	}
 }
@@ -264,23 +263,22 @@ bool isIntOrFloat(const std::string &str, float &value)
 
 bool isValidFormat(const std::string &line)
 {
-    size_t separatorPos = line.find('|');
-    if (separatorPos == std::string::npos) 
+	size_t separatorPos = line.find('|');
+	if (separatorPos == std::string::npos)
 		return false; // No '|' found
-    if (separatorPos == 0 || separatorPos == line.length() - 1) 
+	if (separatorPos == 0 || separatorPos == line.length() - 1)
 		return false; // '|' at start or end
-    
-    // Ensure there's exactly one space before and after '|'
-    if (line[separatorPos - 1] != ' ' || line[separatorPos + 1] != ' ')
-        return false;
-    
-    // Check that there's text (non-space) before and after the separator
-    if (line.find_first_not_of(' ') >= separatorPos || line.find_last_not_of(' ') <= separatorPos)
-        return false;
 
-    return true;
+	// Ensure there's exactly one space before and after '|'
+	if (line[separatorPos - 1] != ' ' || line[separatorPos + 1] != ' ')
+		return false;
+
+	// Check that there's text (non-space) before and after the separator
+	if (line.find_first_not_of(' ') >= separatorPos || line.find_last_not_of(' ') <= separatorPos)
+		return false;
+
+	return true;
 }
-
 
 void BitcoinExchange::outputInputFile(const std::string &inputFilename)
 {
@@ -306,11 +304,11 @@ void BitcoinExchange::outputInputFile(const std::string &inputFilename)
 			firstLine = false;
 			continue;
 		}
-        if (!isValidFormat(line))
-        {
-            std::cerr << "Error: invalid format in input file. Expected 'string space | space string'." << std::endl;
-            continue;
-        }
+		if (!isValidFormat(line))
+		{
+			std::cerr << "Error: invalid format in input file. Expected 'string space | space string'." << std::endl;
+			continue;
+		}
 
 		std::stringstream ss(line);
 		std::string date;
