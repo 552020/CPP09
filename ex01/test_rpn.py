@@ -19,7 +19,7 @@ test_cases = [
 ]
 
 # Path to your RPN program executable
-RPN_EXECUTABLE = "./rpn"
+RPN_EXECUTABLE = "./RPN"
 
 
 def run_test(expression, expected_output):
