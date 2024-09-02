@@ -365,7 +365,7 @@ void testIteratorCompatibility()
 	// TODO: Add a test so that we catch the compilation error
 }
 
-void testGroupIteartor()
+void testGroupIterator()
 {
 	testDefaultConstructor();
 	testParameterizedConstructor();

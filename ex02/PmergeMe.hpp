@@ -11,6 +11,8 @@
 #include <deque>
 #include <list>
 #include <ctime>
+#include <cstdlib> // For srand() and rand()
+
 #include "GroupIterator.hpp"
 
 template <typename RandomAccessIterator>

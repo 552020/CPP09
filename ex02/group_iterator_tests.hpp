@@ -7,6 +7,6 @@
 #include <list>
 #include "GroupIterator.hpp"
 
-void testGroupIteartor();
+void testGroupIterator();
 
 #endif
