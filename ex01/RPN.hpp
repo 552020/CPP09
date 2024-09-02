@@ -18,7 +18,7 @@ class RPN
 
   private:
 	std::string _input;
-	std::stack<int> _stack;
+	// std::stack<int> _stack;
 
 	RPN(const RPN &other);
 	RPN &operator=(const RPN &other);

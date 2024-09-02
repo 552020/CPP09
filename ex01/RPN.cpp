@@ -1,8 +1,6 @@
 #include "RPN.hpp"
 #include <cctype>
 
-
-
 RPN::RPN(const std::string &input) : _input(input)
 {
 }
@@ -57,7 +55,7 @@ bool RPN::isValid() const
 	{
 		if (isdigit(trimmedInput[i]))
 		{
-			// We check if the next character is a digit, cause only ond digit is allowed
+			// We check if the next character is a digit, cause only single digit numbers are allowed
 			// std::cout << trimmedInput[i] << std::endl;
 			if (i + 1 < trimmedInput.length())
 			{
