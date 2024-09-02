@@ -45,7 +45,8 @@ bool checkInputAndFillNumersVec(int argc, char **argv, std::vector<int> &numbers
 
 			return false;
 		}
-		long num = std::strtol(token.c_str(), NULL, 10);
+		// long num = std::strtol(token.c_str(), NULL, 10);
+		long num = strtol(token.c_str(), NULL, 10);
 		if (num > INT_MAX || num <= 0)
 		{
 			std::cout << "Invalid input. Number exceeds maximum allowed value (2147483647) or is non-positive."

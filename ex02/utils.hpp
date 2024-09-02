@@ -6,6 +6,10 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <climits>
+#include <cstdlib>
+
+typedef unsigned long long uint_least64_t;
 
 template <typename RandomAccessIterator>
 struct PendChainNode;
