@@ -1,7 +1,7 @@
-#include <iostream> // For std::cout, std::cerr, std::endl
-#include <fstream>	// For std::ifstream
-#include <sstream>	// For std::stringstream
-#include <map>		// For std::map
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <map>
 
 #include "BitcoinExchange.hpp"
 
