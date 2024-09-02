@@ -3,7 +3,6 @@
 #include <sstream>
 #include <iostream>
 #include <cctype>
-#include <regex>
 #include <climits> // For INT_MAX and INT_MIN
 #include <cfloat>  // For FLT_MAX and FLT_MIN
 
@@ -197,7 +196,7 @@ bool BitcoinExchange::parseDatabase(const std::string &DBFilename)
 
 	std::string line;
 	bool firstLine = true;
-	// Note: getline() is used to extracth the line
+	// Note: getline() is used to extract the line
 	while (std::getline(file, line))
 	{
 		if (firstLine)
@@ -226,17 +225,6 @@ bool BitcoinExchange::parseDatabase(const std::string &DBFilename)
 	}
 	return true;
 }
-
-// bool isIntOrFloat(const std::string &str, float &value)
-// {
-// 	char *endPtr;
-// 	value = std::strtof(str.c_str(), &endPtr);
-
-// 	if (*endPtr != '\0')
-// 		return false;
-
-// 	return true;
-// }
 
 bool isIntOrFloat(const std::string &str, float &value)
 {
@@ -274,6 +262,26 @@ bool isIntOrFloat(const std::string &str, float &value)
 	return true;
 }
 
+bool isValidFormat(const std::string &line)
+{
+    size_t separatorPos = line.find('|');
+    if (separatorPos == std::string::npos) 
+		return false; // No '|' found
+    if (separatorPos == 0 || separatorPos == line.length() - 1) 
+		return false; // '|' at start or end
+    
+    // Ensure there's exactly one space before and after '|'
+    if (line[separatorPos - 1] != ' ' || line[separatorPos + 1] != ' ')
+        return false;
+    
+    // Check that there's text (non-space) before and after the separator
+    if (line.find_first_not_of(' ') >= separatorPos || line.find_last_not_of(' ') <= separatorPos)
+        return false;
+
+    return true;
+}
+
+
 void BitcoinExchange::outputInputFile(const std::string &inputFilename)
 {
 	std::ifstream file(inputFilename.c_str());
@@ -284,9 +292,6 @@ void BitcoinExchange::outputInputFile(const std::string &inputFilename)
 	}
 	std::string line;
 	bool firstLine = true;
-
-	// Regular expression to match "string space | space string"
-	std::regex lineFormatRegex("^\\s*\\S+\\s\\|\\s\\S+\\s*$");
 
 	while (std::getline(file, line))
 	{
@@ -301,11 +306,11 @@ void BitcoinExchange::outputInputFile(const std::string &inputFilename)
 			firstLine = false;
 			continue;
 		}
-		if (!std::regex_match(line, lineFormatRegex))
-		{
-			std::cerr << "Error: invalid format in input file. Expected 'string space | space string'." << std::endl;
-			continue;
-		}
+        if (!isValidFormat(line))
+        {
+            std::cerr << "Error: invalid format in input file. Expected 'string space | space string'." << std::endl;
+            continue;
+        }
 
 		std::stringstream ss(line);
 		std::string date;
@@ -338,10 +343,6 @@ void BitcoinExchange::outputInputFile(const std::string &inputFilename)
 			}
 			// Find the closest date that is not after the given date
 			std::map<std::string, float>::const_iterator it = _exchangeRates.lower_bound(date);
-			// if (it != _exchangeRates.begin() && (it == _exchangeRates.end() || it->first != date))
-			// {
-			// 	--it; // Use the closest lower date if the exact date is not found
-			// }
 
 			// Check if the iterator points to the first element in the map
 			if (it == _exchangeRates.begin())
@@ -350,7 +351,6 @@ void BitcoinExchange::outputInputFile(const std::string &inputFilename)
 				if (it->first > date)
 				{
 					std::cerr << "Error: No valid previous exchange rate found for the date " << date << std::endl;
-					// return;
 					continue;
 				}
 			}
@@ -374,17 +374,14 @@ void BitcoinExchange::outputInputFile(const std::string &inputFilename)
 	}
 }
 
-// Copy constructor
 BitcoinExchange::BitcoinExchange(const BitcoinExchange &other) : _exchangeRates(other._exchangeRates)
 {
 }
 
-// Destructor
 BitcoinExchange::~BitcoinExchange()
 {
 }
 
-// Assignment operator
 BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &other)
 {
 	if (this != &other)

@@ -1,17 +1,18 @@
 #ifndef BITCOINEXCHANGE_HPP
 #define BITCOINEXCHANGE_HPP
 
-#include <map>		// For std::map to store exchange rates by date
-#include <string>	// For std::string
-#include <dirent.h> // For DIR, dirent, opendir, readdir, closedir
+#include <map>
+#include <string>
+#include <dirent.h>
+#include <cstdlib> 
 
 class BitcoinExchange
 {
   public:
-	BitcoinExchange();										  // Default constructor
-	BitcoinExchange(const BitcoinExchange &other);			  // Copy constructor
-	BitcoinExchange &operator=(const BitcoinExchange &other); // Assignment operator
-	~BitcoinExchange();										  // Destructor
+	BitcoinExchange();
+	BitcoinExchange(const BitcoinExchange &other);
+	BitcoinExchange &operator=(const BitcoinExchange &other);
+	~BitcoinExchange();
 
 	const std::map<std::string, float> &getExchangeRates() const;
 	void outputInputFile(const std::string &inputFilename);

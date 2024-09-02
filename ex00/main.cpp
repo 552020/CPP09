@@ -1,7 +1,6 @@
 #include <iostream> // For std::cout, std::cerr, std::endl
 #include <fstream>	// For std::ifstream
 #include <sstream>	// For std::stringstream
-#include <string>	// For std::string
 #include <map>		// For std::map
 
 #include "BitcoinExchange.hpp"
