@@ -16,7 +16,7 @@ struct PendChainNode;
 
 bool isNumber(const std::string &input);
 
-bool checkInputAndFillNumersVec(int argc, char **argv, std::vector<int> &numbers);
+bool checkInputAndFillNumbersVec(int argc, char **argv, std::vector<int> &numbers);
 
 std::vector<unsigned long long> generateJacobsthalNumbers(size_t n);
 std::vector<unsigned long long> generateJacobsthalDifferences(size_t n);

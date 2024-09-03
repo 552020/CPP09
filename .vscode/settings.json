@@ -74,5 +74,9 @@
     "iterator": "cpp",
     "memory_resource": "cpp",
     "regex": "cpp"
-  }
+},
+"cSpell.words": [
+	"Jacobsthal",
+	"Pmerge"
+]
 }

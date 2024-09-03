@@ -10,7 +10,7 @@ bool isNumber(const std::string &input)
 	return true;
 }
 
-bool checkInputAndFillNumersVec(int argc, char **argv, std::vector<int> &numbers)
+bool checkInputAndFillNumbersVec(int argc, char **argv, std::vector<int> &numbers)
 {
 	// std::cout << "Passed arguments: " << argc - 1 << std::endl;
 	std::string input;

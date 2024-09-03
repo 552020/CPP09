@@ -400,7 +400,9 @@ void multipleTestDequeSort(int numTests,
 }
 
 template <typename T>
-void compareVecAndDequeSort(std::vector<T> &vec, std::vector<unsigned long long> &slicedJacobsthaDifference, bool print)
+void compareVecAndDequeSort(std::vector<T> &vec,
+							std::vector<unsigned long long> &slicedJacobsthalDifferences,
+							bool print)
 {
 	if (print)
 	{
@@ -411,7 +413,7 @@ void compareVecAndDequeSort(std::vector<T> &vec, std::vector<unsigned long long>
 	}
 	clock_t startVec = clock();
 
-	mergeInsertionSort(vec.begin(), vec.end(), std::less<T>(), slicedJacobsthaDifference);
+	mergeInsertionSort(vec.begin(), vec.end(), std::less<T>(), slicedJacobsthalDifferences);
 	clock_t endVec = clock();
 	if (print)
 	{
@@ -431,7 +433,7 @@ void compareVecAndDequeSort(std::vector<T> &vec, std::vector<unsigned long long>
 			  << std::endl;
 	std::deque<T> deq(vec.begin(), vec.end());
 	clock_t startDeq = clock();
-	mergeInsertionSort(deq.begin(), deq.end(), std::less<T>(), slicedJacobsthaDifference);
+	mergeInsertionSort(deq.begin(), deq.end(), std::less<T>(), slicedJacobsthalDifferences);
 	clock_t endDeq = clock();
 	if (!print)
 	{

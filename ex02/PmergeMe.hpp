@@ -51,8 +51,9 @@ class PmergeMe
 
 	void multipleTestDequeSort(int numTests, int minElements, int maxElements, bool print);
 	template <typename T>
-	void
-	compareVecAndDequeSort(std::vector<T> &vec, std::vector<unsigned long long> &slicedJacobsthaDifference, bool print);
+	void compareVecAndDequeSort(std::vector<T> &vec,
+								std::vector<unsigned long long> &slicedJacobsthalDifferences,
+								bool print);
 	void multipleCompareVecAndDequeSort(int numTests,
 										int minElements,
 										int maxElements,

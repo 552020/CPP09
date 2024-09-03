@@ -1,9 +1,9 @@
 #include <string>
 #include <iostream>
-#include <cstdlib> // for strtol
+#include <cstdlib>
 #include <vector>
 #include <sstream>
-#include <cctype> // for
+#include <cctype>
 #include "PmergeMe.hpp"
 #include "utils.hpp"
 #include "group_iterator_tests.hpp"
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 		return 0;
 	}
 	std::vector<int> numbers;
-	if (!checkInputAndFillNumersVec(argc, argv, numbers))
+	if (!checkInputAndFillNumbersVec(argc, argv, numbers))
 		return 1;
 
 	PmergeMe pmergeMe(numbers);
