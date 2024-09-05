@@ -53,39 +53,19 @@ void PmergeMe::binaryInsertionIntoMainChain(const std::vector<unsigned long long
 template <typename RandomAccessIterator>
 void PmergeMe::finalizeSorting(std::list<RandomAccessIterator> &mainChain, RandomAccessIterator first, std::size_t size)
 {
-	// std::cout << "Main Chain before caching: " << std::endl;
-	// for (typename std::list<RandomAccessIterator>::iterator it = mainChain.begin(); it != mainChain.end(); ++it)
-	// {
-	// 	typename RandomAccessIterator::iterator_type base_it = (*it).base();
-	// 	std::cout << "Value: " << *base_it << ", Address: " << static_cast<void *>(std::addressof(*base_it))
-	// 	  << std::endl;
-	// }
 	std::vector<typename std::iterator_traits<RandomAccessIterator>::value_type> cache;
 	cache.reserve(size);
 
-	// std::cout << "Starting finalizeSorting. Cache initialized with size: " << size << std::endl;
 	for (typename std::list<RandomAccessIterator>::iterator it = mainChain.begin(); it != mainChain.end(); ++it)
 	{
 		typename RandomAccessIterator::iterator_type begin = (*it).base();
 		typename RandomAccessIterator::iterator_type end = begin + (*it).size();
-
-		// std::cout << "Begin: " << *begin << ", End: " << *(end - 1) << ", Size: " << it->size() << std::endl;
-		// std::cout << "Copying range from address " << static_cast<void *>(&(*begin)) << " to "
-		//   << static_cast<void *>(&(*(end - 1))) << std::endl;
-
 		for (; begin != end; ++begin)
-		{
-			// std::cout << "Pushing " << *begin << " from address " << static_cast<void *>(&(*begin)) << " to cache."
-			// 		  << std::endl;
 			cache.push_back(*begin);
-		}
 	}
-	// std::cout << "Finished copying to cache. Cache size: " << cache.size() << std::endl;
 
 	if (cache.size() != size)
 	{
-		// std::cerr << "Warning: Cache size (" << cache.size() << ") does not match expected size (" << size << ")."
-		// 		  << std::endl;
 	}
 
 	typename std::vector<typename std::iterator_traits<RandomAccessIterator>::value_type>::iterator cacheIt =
