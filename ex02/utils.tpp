@@ -50,7 +50,6 @@ void printPendChain(const std::list<PendChainNode<RandomAccessIterator> > &pendC
 		it != pendChain.end();
 		++it)
 	{
-		// std::cout << *(*(it->it)) << " ";
 		std::cout << *(it->it) << " "; // Single dereference
 	}
 	std::cout << std::endl;
@@ -68,10 +67,8 @@ void printPendChainWithNext(const std::list<PendChainNode<RandomAccessIterator> 
 		 ++it)
 	// clang-format on
 	{
-		// std::cout << "[Value: " << *(*(it->it)) << ", Next: ";
 		std::cout << "[Value: " << *(it->it) << ", Next: ";
 
-		// if (it->next != typename std::list<RandomAccessIterator>::iterator())
 		if (it->next != mainChain.end())
 
 		{

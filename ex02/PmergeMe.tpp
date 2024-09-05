@@ -105,9 +105,8 @@ void PmergeMe::mergeInsertionSortImpl(RandomAccessIterator first,
 
 	RandomAccessIterator end = last;
 	if (hasStray)
-		--end; // Equivalent to std::prev(last) in C++98
+		--end;
 
-	// Iterate over pairs of elements
 	for (RandomAccessIterator it = first; it != end; it += 2)
 	{
 		if (compare(*(it + 1), *it))
