@@ -20,16 +20,11 @@ void PmergeMe::binaryInsertionIntoMainChain(const std::vector<unsigned long long
 		while (true)
 		{
 
-			// MainIt insertionPoint = std::upper_bound(mainChain.begin(), mainChain.end(), *it->it, compare);
-			// MainIt insertionPoint = std::upper_bound(mainChain.begin(), it->next, *it->it, compare);
-			// Manual loop to find insertion point instead of std::upper_bound
 			MainIt insertionPoint = mainChain.begin();
 			for (; insertionPoint != it->next; ++insertionPoint)
 			{
 				if (compare(*it->it, **insertionPoint))
-				{
 					break;
-				}
 			}
 
 			mainChain.insert(insertionPoint, it->it);
