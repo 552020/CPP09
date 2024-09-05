@@ -92,24 +92,12 @@ void PmergeMe::mergeInsertionSortImpl(RandomAccessIterator first,
 									  Compare compare,
 									  const std::vector<unsigned long long> &slicedJacobsthalDiff)
 {
-	// std::cout << "mergeInsertionSortImpl: first = " << *first << ", last = " << *(last - 1) << std::endl;
-
 	using std::iter_swap;
 
 	// Calculate the distance (size) between first and last iterators
 	typename std::iterator_traits<RandomAccessIterator>::difference_type size = std::distance(first, last);
-	// Debugging prints
-	// std::cout << "Size: " << size << std::endl;
-	// std::cout << "\033[31mFirst iterator points to value: " << *first
-	// 		  << " at address: " << static_cast<void *>(&(*first)) << "\033[0m" << std::endl;
-
-	// std::cout << "\033[31mLast iterator points to value: " << *(last - 1)
-	// 		  << " at address: " << static_cast<void *>(&(*(last - 1))) << "\033[0m" << std::endl;
-
-	// std::cout << "\033[31mDistance (size) between first and last: " << size << "\033[0m" << std::endl;
 	if (size < 2)
 	{
-		// std::cout << "Base case reached with size < 2, returning..." << std::endl;
 		return;
 	}
 
@@ -120,14 +108,10 @@ void PmergeMe::mergeInsertionSortImpl(RandomAccessIterator first,
 		--end; // Equivalent to std::prev(last) in C++98
 
 	// Iterate over pairs of elements
-	// std::cout << "Iterating over pairs of elements ..." << std::endl;
 	for (RandomAccessIterator it = first; it != end; it += 2)
 	{
-		// std::cout << "Current pair: " << *it << " and " << *(it + 1) << std::endl;
-		// Compare the current pair and swap if out of order
 		if (compare(*(it + 1), *it))
 		{
-			// std::cout << "Swapping " << *it << " and " << *(it + 1) << std::endl;
 			iter_swap(it, it + 1);
 		}
 		else
@@ -135,63 +119,28 @@ void PmergeMe::mergeInsertionSortImpl(RandomAccessIterator first,
 			// std::cout << "No need to swap " << *it << " and " << *(it + 1) << std::endl;
 		}
 	}
-	// Debugging the recursive call
-	// std::cout << "Calling mergeInsertionSortImpl recursively with first to end" << std::endl;
-
-	// Recursively sort pairs by their maximum value
-	// std::cout << "first: " << *first << std::endl;
-	// std::cout << "end: " << *(end - 1) << std::endl;
 	mergeInsertionSort(makeGroupIterator(first, 2), makeGroupIterator(end, 2), compare, slicedJacobsthalDiff);
-
-	// print size in yellow
-	// std::cout << "\033[33mSize: " << size << "\033[0m" << std::endl;
 
 	typedef PendChainNode<RandomAccessIterator> NodeType;
 	std::list<RandomAccessIterator> mainChain;
 	std::list<NodeType> pendChain;
 
-	// Initialize the mainChain with the first two elements
-	// This is done in morwenn's code with the following line:
-	// 	std::list<RandomAccessIterator> chain = {first, std::next(first)};
 	mainChain.push_back(first);
-	// std::cout << "first: " << *first << std::endl;
 	RandomAccessIterator second = first + 1;
-	// std::cout << "second: " << *second << std::endl;
 	mainChain.push_back(second);
-
-	// Initialize the pendChain with the rest
-	// first is the first element on the data structure containing the numbers
-	// end is the last one, or the previous one if we have a stray
 	for (RandomAccessIterator it = first + 2; it != end; it += 2)
 	{
 		RandomAccessIterator nextIt = it + 1;
-		// .end() returns an iterator to the element following the last element of the list
-		// .insert() insert an element into the list before the position pointed to by the interator provided
-		// (mainChain.end(), the value inserted is nextIt)
 		typename std::list<RandomAccessIterator>::iterator tmp = mainChain.insert(mainChain.end(), nextIt);
 		NodeType node = {it, tmp};
 		pendChain.push_back(node);
 	}
-
-	// If there is an odd element, handle it
 	if (hasStray)
 	{
 		NodeType node = {end, mainChain.end()};
 		pendChain.push_back(node);
-		// std::cout << "pendChain, last element: " << *end << std::endl;
 	}
-	// Call the printing functions
-	// printMainChain(mainChain);
-	// printPendChain(pendChain);
-	// printPendChainWithNext(pendChain, mainChain);
-
 	binaryInsertionIntoMainChain(slicedJacobsthalDiff, pendChain, mainChain, compare);
-
-	// std::cout << "After binaryInsertionIntoMainChain:" << std::endl;
-	// printMainChain(mainChain);
-	// printPendChain(pendChain);
-	// printPendChainWithNext(pendChain, mainChain);
-
 	finalizeSorting(mainChain, first, size);
 }
 
