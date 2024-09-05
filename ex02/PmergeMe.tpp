@@ -70,39 +70,20 @@ void PmergeMe::finalizeSorting(std::list<RandomAccessIterator> &mainChain, Rando
 
 	typename std::vector<typename std::iterator_traits<RandomAccessIterator>::value_type>::iterator cacheIt =
 		cache.begin();
-	// std::cout << "Cache: ";
-	// for (; cacheIt != cache.end(); ++cacheIt)
-	// {
-	// 	std::cout << *cacheIt << " ";
-	// }
-	// std::cout << std::endl;
-
-	// std::cout << "Original container before restoring:" << std::endl;
 	for (typename RandomAccessIterator::iterator_type it = first.base(); it != (first + size).base(); ++it)
 	{
 		// std::cout << "Value: " << *it << ", Address: " << static_cast<void *>(std::addressof(*it)) << std::endl;
 	}
-	// std::cout << std::endl;
 
-	// Copy values from the cache back to the original container
 	typename RandomAccessIterator::iterator_type originalIt = first.base();
 	cacheIt = cache.begin();
 
 	while (cacheIt != cache.end())
 	{
-		// std::cout << "Copying " << *cacheIt << " from cache to address "
-		// 		  << static_cast<void *>(std::addressof(*originalIt)) << std::endl;
 		*originalIt = *cacheIt;
 		++originalIt;
 		++cacheIt;
 	}
-
-	// std::cout << "Original container after restoring:" << std::endl;
-	// for (typename RandomAccessIterator::iterator_type it = first.base(); it != (first + size).base(); ++it)
-	// {
-	// 	std::cout << "Value: " << *it << ", Address: " << static_cast<void *>(std::addressof(*it)) << std::endl;
-	// }
-	// std::cout << "Finished finalizeSorting." << std::endl;
 }
 
 template <typename RandomAccessIterator, typename Compare>
