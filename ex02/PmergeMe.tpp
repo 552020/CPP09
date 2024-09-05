@@ -150,7 +150,6 @@ void PmergeMe::mergeInsertionSort(RandomAccessIterator first,
 								  Compare compare,
 								  const std::vector<unsigned long long> &slicedJacobsthalDiff)
 {
-	// std::cout << "mergeInsertionSort" << std::endl;
 	mergeInsertionSortImpl(makeGroupIterator(first, 1), makeGroupIterator(last, 1), compare, slicedJacobsthalDiff);
 }
 
@@ -159,7 +158,7 @@ bool PmergeMe::isSorted(const Container &container)
 {
 	if (container.empty())
 	{
-		return true; // An empty container is considered sorted.
+		return true;
 	}
 
 	typename Container::const_iterator it = container.begin();
@@ -170,8 +169,8 @@ bool PmergeMe::isSorted(const Container &container)
 	{
 		if (*it > *next_it)
 		{
-			return false; // Found an element that is greater than the next one.
+			return false;
 		}
 	}
-	return true; // No elements were out of order.
+	return true;
 }
