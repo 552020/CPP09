@@ -12,7 +12,6 @@ bool isNumber(const std::string &input)
 
 bool checkInputAndFillNumbersVec(int argc, char **argv, std::vector<int> &numbers)
 {
-	// std::cout << "Passed arguments: " << argc - 1 << std::endl;
 	std::string input;
 	if (argc < 2)
 	{
@@ -42,16 +41,13 @@ bool checkInputAndFillNumbersVec(int argc, char **argv, std::vector<int> &number
 			std::cout << "Invalid input. Only positive numbers are allowed, with no signs. Mixed inputs like '\"1 2\" "
 						 "2' are also not tolerated!"
 					  << std::endl;
-
 			return false;
 		}
-		// long num = std::strtol(token.c_str(), NULL, 10);
 		long num = strtol(token.c_str(), NULL, 10);
 		if (num > INT_MAX || num <= 0)
 		{
 			std::cout << "Invalid input. Number exceeds maximum allowed value (2147483647) or is non-positive."
 					  << std::endl;
-
 			return false;
 		}
 		numbers.push_back(static_cast<int>(num));
@@ -76,10 +72,7 @@ std::vector<unsigned long long> generateJacobsthalNumbers(size_t n)
 
 	jacobsthal[1] = 1;
 	for (size_t i = 2; i < n; ++i)
-	{
 		jacobsthal[i] = jacobsthal[i - 1] + 2 * jacobsthal[i - 2];
-	}
-
 	return jacobsthal;
 }
 
@@ -89,10 +82,7 @@ std::vector<unsigned long long> generateJacobsthalDifferences(size_t n)
 	std::vector<unsigned long long> jacobsthalDiff(n - 1);
 
 	for (size_t i = 1; i < n; ++i)
-	{
 		jacobsthalDiff[i - 1] = jacobsthal[i] - jacobsthal[i - 1];
-	}
-
 	return jacobsthalDiff;
 }
 
@@ -174,7 +164,6 @@ void testJacobsthalDifferencesVector(size_t skipCount)
 	// Compare the generated differences with the hardcoded values
 	bool success = true;
 	for (size_t i = skipCount; i < hardcodedDifferences.size(); ++i)
-	// for (size_t i = 0; i < hardcodedDifferences.size(); ++i)
 	{
 
 		size_t j = i + skipCount;
@@ -187,13 +176,8 @@ void testJacobsthalDifferencesVector(size_t skipCount)
 		}
 	}
 
-	// Print the result
 	if (success)
-	{
 		std::cout << "Test passed: All generated differences match the hardcoded values." << std::endl;
-	}
 	else
-	{
 		std::cout << "Test failed: Some generated differences do not match the hardcoded values." << std::endl;
-	}
 }
