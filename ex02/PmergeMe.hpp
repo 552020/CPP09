@@ -5,23 +5,20 @@
 
 #include <string>
 #include <iostream>
-#include <iomanip> // for std::setprecision
+#include <iomanip>
 #include <sstream>
 #include <vector>
 #include <deque>
 #include <list>
 #include <ctime>
-#include <cstdlib> // For srand() and rand()
+#include <cstdlib>
 
 #include "GroupIterator.hpp"
 
 template <typename RandomAccessIterator>
 struct PendChainNode
 {
-	// The iterator pointing to the current element
 	RandomAccessIterator it;
-	// Iterator to the next element in the main chain
-	// next is probably a deceptive name, cause next is not pointing to the next node in the chain
 	typename std::list<RandomAccessIterator>::iterator next;
 };
 

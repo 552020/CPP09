@@ -97,7 +97,7 @@ void testComparisonOperators()
 	GroupIterator<std::vector<int>::iterator> groupIt2(vec.begin() + 3, 3);
 	GroupIterator<std::vector<int>::iterator> groupIt3(vec.begin(), 3);
 
-	// Dubug Information
+	// Debug Information
 	std::cout << "groupIt1 base: " << (groupIt1.base() - vec.begin()) << std::endl;
 	std::cout << "groupIt2 base: " << (groupIt2.base() - vec.begin()) << std::endl;
 	std::cout << "groupIt3 base: " << (groupIt3.base() - vec.begin()) << std::endl;
